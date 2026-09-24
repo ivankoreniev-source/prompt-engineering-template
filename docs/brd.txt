@@ -1,0 +1,533 @@
+You need to create a completely new web application from scratch.
+
+The project is a website for creating tests and taking tests.
+
+Do not start coding immediately. First understand the full project plan and requirements below, then implement the project step by step.
+
+# 1. PROJECT IDEA
+
+Create a web platform where users can:
+
+* register and log in;
+* create their own tests;
+* edit and delete their tests;
+* add different questions to tests;
+* configure correct answers;
+* publish tests;
+* take tests created by other users;
+* receive a score after completing a test;
+* view their results and test history.
+
+The application should be simple, clean, modern, and easy to use.
+
+Do not add unnecessary features that are not related to the main purpose of the application.
+
+# 2. USER ROLES
+
+The application should have two main types of users:
+
+## Regular user
+
+A regular user can:
+
+* create tests;
+* edit their own tests;
+* delete their own tests;
+* publish their tests;
+* take available tests;
+* view their own results;
+* view their test history;
+* manage their profile.
+
+## Test creator
+
+There does not need to be a separate registration system for creators.
+
+Every registered user can create tests.
+
+A user can be both a test creator and a test participant.
+
+# 3. MAIN PAGES
+
+Create the following pages:
+
+## Home / Dashboard
+
+Show:
+
+* welcome message;
+* available tests;
+* recently created tests;
+* user's recent results;
+* quick action to create a test;
+* quick action to take a test.
+
+## Tests
+
+Show available published tests.
+
+Each test should display:
+
+* title;
+* description;
+* creator;
+* number of questions;
+* approximate difficulty if configured;
+* creation/publication information;
+* button to start the test.
+
+Add search and basic filtering if it can be implemented cleanly.
+
+## Create Test
+
+Allow the user to create a test.
+
+Fields:
+
+* test title;
+* description;
+* category;
+* difficulty;
+* questions.
+
+The user must be able to add multiple questions.
+
+## Edit Test
+
+Allow the creator to modify their existing test.
+
+They should be able to:
+
+* change title;
+* change description;
+* change category;
+* change difficulty;
+* add questions;
+* edit questions;
+* delete questions;
+* change correct answers.
+
+## Take Test
+
+Display one test question at a time or in a clear list.
+
+The user must be able to:
+
+* select an answer;
+* move between questions;
+* see which questions have been answered;
+* submit the test.
+
+Do not show the correct answers before submission.
+
+## Results
+
+After submitting a test, show:
+
+* total score;
+* number of correct answers;
+* number of incorrect answers;
+* percentage;
+* result status;
+* answers given by the user;
+* correct answers;
+* optionally, explanations if the test creator added them.
+
+## My Tests
+
+Show tests created by the current user.
+
+Allow:
+
+* editing;
+* deleting;
+* publishing/unpublishing;
+* viewing statistics if implemented.
+
+## My Results
+
+Show tests completed by the current user.
+
+Display:
+
+* test name;
+* date;
+* score;
+* percentage;
+* result.
+
+## Profile / Settings
+
+Allow the user to:
+
+* view username and email;
+* change basic profile information;
+* log out.
+
+# 4. QUESTION TYPES
+
+The initial version should support at least:
+
+### Single Choice
+
+One correct answer.
+
+Example:
+
+What is 2 + 2?
+
+* 3
+* 4
+* 5
+* 6
+
+Correct answer: 4.
+
+### Multiple Choice
+
+Several answers can be correct.
+
+The creator must be able to select multiple correct answers.
+
+### True / False
+
+Two possible answers:
+
+* True
+* False
+
+Design the system so additional question types can be added later without rewriting the entire application.
+
+# 5. TEST CREATION LOGIC
+
+When creating a test:
+
+1. User enters basic test information.
+2. User adds questions.
+3. User selects the question type.
+4. User enters answer options.
+5. User selects the correct answer(s).
+6. User can optionally add an explanation.
+7. User saves the test.
+8. User can publish it.
+
+A test should not be publishable if:
+
+* it has no questions;
+* a question has no answers;
+* a question has no correct answer;
+* required fields are empty;
+* the question configuration is invalid.
+
+Validate all of these cases.
+
+# 6. TEST TAKING LOGIC
+
+When a user starts a test:
+
+* load the published test;
+* do not expose correct answers to the client unnecessarily;
+* allow the user to answer questions;
+* prevent accidental loss of answers while navigating;
+* allow the user to review answers before submitting;
+* require confirmation before final submission.
+
+After submission:
+
+* calculate the score;
+* compare answers with the correct answers;
+* save the result permanently;
+* show the result to the user.
+
+A user should not be able to modify an already submitted result.
+
+# 7. AUTHENTICATION
+
+Implement:
+
+* registration;
+* login;
+* logout;
+* persistent sessions;
+* protected pages.
+
+Registration should include:
+
+* username;
+* email;
+* password;
+* password confirmation.
+
+Validate:
+
+* required fields;
+* valid email;
+* password requirements;
+* matching passwords;
+* unique username;
+* unique email.
+
+Never store passwords as plain text.
+
+# 8. DATA STORAGE
+
+All important data must be persistent.
+
+Store at minimum:
+
+### Users
+
+* user ID;
+* username;
+* email;
+* securely hashed password;
+* registration date.
+
+### Tests
+
+* test ID;
+* creator ID;
+* title;
+* description;
+* category;
+* difficulty;
+* questions;
+* publication status;
+* creation date;
+* update date.
+
+### Questions
+
+* question ID;
+* test ID;
+* question text;
+* question type;
+* answer options;
+* correct answer(s);
+* explanation if provided.
+
+### Results
+
+* result ID;
+* user ID;
+* test ID;
+* answers;
+* score;
+* percentage;
+* completion date.
+
+Do not rely only on temporary browser state or in-memory data.
+
+# 9. SECURITY AND ACCESS CONTROL
+
+Users must only be able to modify or delete tests they own.
+
+Users must not be able to:
+
+* edit another user's tests;
+* delete another user's tests;
+* modify another user's results;
+* access private information belonging to another user.
+
+Validate permissions on the server/backend, not only in the frontend.
+
+Do not trust data coming from the client.
+
+# 10. UI / UX
+
+The interface should be:
+
+* modern;
+* clean;
+* responsive;
+* easy to understand;
+* consistent across all pages.
+
+Use reusable components.
+
+Buttons, forms, cards, navigation, dialogs, notifications, and other UI elements should have a consistent design.
+
+The application should work on both desktop and mobile screen sizes.
+
+Provide clear feedback for:
+
+* successful actions;
+* validation errors;
+* failed requests;
+* loading states;
+* empty states.
+
+# 11. ERROR HANDLING
+
+Handle possible errors properly:
+
+* invalid login;
+* invalid registration;
+* duplicate username/email;
+* failed database request;
+* missing test;
+* deleted test;
+* unauthorized access;
+* invalid test configuration;
+* failed test submission;
+* network/server errors.
+
+Do not allow the application to silently fail.
+
+Show useful messages to the user and log technical errors appropriately.
+
+# 12. PROJECT ARCHITECTURE
+
+Before implementing the application:
+
+* inspect the chosen technology stack;
+* create a clean project structure;
+* separate frontend and backend responsibilities where appropriate;
+* create reusable components;
+* keep business logic separate from UI;
+* keep database operations separate from presentation logic;
+* avoid duplicated code.
+
+Do not overengineer the application.
+
+The architecture should be simple enough for a student project but organized enough to be extended later.
+
+# 13. DEVELOPMENT PLAN
+
+Implement the project in these stages:
+
+### Stage 1 — Project foundation
+
+* create the project;
+* configure dependencies;
+* create the basic structure;
+* configure database/storage;
+* configure development environment.
+
+### Stage 2 — Authentication
+
+* registration;
+* login;
+* logout;
+* sessions;
+* protected routes;
+* password hashing.
+
+### Stage 3 — Test management
+
+* create test;
+* edit test;
+* delete test;
+* publish/unpublish;
+* My Tests page.
+
+### Stage 4 — Questions
+
+Implement:
+
+* single choice;
+* multiple choice;
+* true/false;
+* question validation;
+* correct answer configuration.
+
+### Stage 5 — Test taking
+
+* test selection;
+* test interface;
+* answer selection;
+* navigation;
+* review;
+* submission.
+
+### Stage 6 — Results
+
+* score calculation;
+* result storage;
+* results page;
+* test history;
+* correct/incorrect answer review.
+
+### Stage 7 — UI/UX
+
+* consistent design;
+* responsive layout;
+* loading states;
+* error states;
+* empty states;
+* notifications;
+* accessibility improvements.
+
+### Stage 8 — Testing and debugging
+
+Test the complete application.
+
+Check:
+
+* registration;
+* login;
+* logout;
+* test creation;
+* test editing;
+* test deletion;
+* publishing;
+* taking tests;
+* scoring;
+* result storage;
+* permissions;
+* multiple users;
+* data persistence;
+* page navigation;
+* responsive layout;
+* browser console;
+* backend errors;
+* database errors.
+
+Fix every discovered bug.
+
+# 14. AI RULES
+
+While developing the project:
+
+* Do not invent requirements that were not specified.
+* Do not remove required functionality.
+* Do not create duplicate functionality.
+* Do not leave unfinished TODOs.
+* Do not use fake data where real application data is required.
+* Do not create placeholder functionality and consider it finished.
+* Do not store sensitive information insecurely.
+* Do not bypass authentication or authorization checks.
+* Do not modify unrelated parts of the project without a reason.
+* Prefer simple and maintainable solutions.
+* Reuse existing components and logic when appropriate.
+* Before deleting code, verify that it is not required.
+* After every major implementation stage, test the functionality.
+* If a bug is found, fix it instead of simply reporting it.
+
+# 15. FINAL REQUIREMENT
+
+Do not stop at planning.
+
+After understanding the requirements, actually implement the complete application.
+
+When the implementation is finished:
+
+1. Run the application.
+2. Test every important feature.
+3. Find bugs.
+4. Fix the bugs.
+5. Run the tests again.
+6. Perform a final audit against this specification.
+7. Remove unnecessary template/demo code.
+8. Make sure the final project is clean and working.
+
+At the end, provide a concise report containing:
+
+* what was implemented;
+* what files/components were created or changed;
+* what was removed;
+* what was tested;
+* what bugs were found and fixed;
+* whether all requirements are complete.
+
+The final result must be a fully working website for creating, publishing, taking, and completing tests.

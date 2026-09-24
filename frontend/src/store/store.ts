@@ -1,15 +1,18 @@
 import { configureStore } from '@reduxjs/toolkit'
-
-import { itemsApi } from '@/store/api/itemsApi'
-import appReducer from '@/store/slices/appSlice'
+import { baseApi } from './api/baseApi'
+import authReducer from './slices/authSlice'
+import navigationReducer from './slices/navigationSlice'
+import uiReducer from './slices/uiSlice'
 
 export const store = configureStore({
   reducer: {
-    app: appReducer,
-    [itemsApi.reducerPath]: itemsApi.reducer,
+    auth: authReducer,
+    navigation: navigationReducer,
+    ui: uiReducer,
+    [baseApi.reducerPath]: baseApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(itemsApi.middleware),
+    getDefaultMiddleware().concat(baseApi.middleware),
 })
 
 export type RootState = ReturnType<typeof store.getState>

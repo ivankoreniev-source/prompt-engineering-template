@@ -1,4 +1,5 @@
 @echo off
+chcp 65001 >nul
 setlocal enabledelayedexpansion
 title QuizCraft - Starting Platform...
 
@@ -27,9 +28,9 @@ if %ERRORLEVEL% equ 0 (
     set HAS_UV=1
 ) else (
     where python >nul 2>nul
-    if %ERRORLEVEL% neq 0 (
-        echo [ERROR] Neither 'uv' nor 'python' was found in PATH.
-        echo Please install uv (https://docs.astral.sh/uv/) or Python 3.11+.
+    if !ERRORLEVEL! neq 0 (
+        echo [ERROR] Neither uv nor python was found in PATH.
+        echo Please install uv https://docs.astral.sh/uv/ or Python 3.11+.
         echo.
         pause
         exit /b 1
@@ -58,7 +59,7 @@ echo.
 echo [2/4] Preparing frontend...
 cd /d "%~dp0frontend"
 if not exist "node_modules" (
-    echo Installing frontend dependencies (npm install)...
+    echo Installing frontend dependencies via npm install...
     call npm install
 ) else (
     echo Frontend dependencies are ready.
@@ -67,18 +68,16 @@ if not exist "node_modules" (
 rem 5. Launch Backend server in a separate window
 echo.
 echo [3/4] Starting backend server on http://127.0.0.1:8001...
-cd /d "%~dp0backend"
 if !HAS_UV! equ 1 (
-    start "QuizCraft Backend (FastAPI)" cmd /k "uv run uvicorn app.main:app --reload --port 8001"
+    start "QuizCraft Backend (FastAPI)" /D "%~dp0backend" cmd /k "uv run uvicorn app.main:app --reload --port 8001"
 ) else (
-    start "QuizCraft Backend (FastAPI)" cmd /k "call .venv\Scripts\activate.bat && python -m uvicorn app.main:app --reload --port 8001"
+    start "QuizCraft Backend (FastAPI)" /D "%~dp0backend" cmd /k "call .venv\Scripts\activate.bat && python -m uvicorn app.main:app --reload --port 8001"
 )
 
 rem 6. Launch Frontend server in a separate window
 echo.
 echo [4/4] Starting frontend server on http://localhost:5174...
-cd /d "%~dp0frontend"
-start "QuizCraft Frontend (Vite)" cmd /k "npm run dev"
+start "QuizCraft Frontend (Vite)" /D "%~dp0frontend" cmd /k "npm run dev"
 
 echo.
 echo ============================================================

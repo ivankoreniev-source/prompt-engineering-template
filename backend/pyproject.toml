@@ -12,8 +12,6 @@ dependencies = [
     "httpx>=0.28.0",
 ]
 
-[tool.uv.scripts]
-dev = "uvicorn app.main:app --reload --port 8001"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

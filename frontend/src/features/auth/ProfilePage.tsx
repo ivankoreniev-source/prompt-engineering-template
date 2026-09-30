@@ -1,40 +1,58 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import type { AppDispatch, RootState } from '@/store/store'
 import { logout, setUser } from '@/store/slices/authSlice'
 import { navigate } from '@/store/slices/navigationSlice'
 import { addToast } from '@/store/slices/uiSlice'
-import { useGetMeQuery, useUpdateProfileMutation, useLogoutMutation } from '@/store/api/authApi'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  useGetMeQuery,
+  useUpdateProfileMutation,
+  useLogoutMutation,
+} from '@/store/api/authApi'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { AlertCircle, Calendar, CheckCircle2, Lock, LogOut, Mail, User } from 'lucide-react'
+import {
+  AlertCircle,
+  Calendar,
+  CheckCircle2,
+  Lock,
+  LogOut,
+  Mail,
+  User,
+} from 'lucide-react'
 
-export const ProfilePage: React.FC = () => {
+interface ProfileEditFormProps {
+  user: {
+    id: string
+    username: string
+    email: string
+    bio?: string
+    created_at: string
+  }
+  onRefetch: () => void
+}
+
+const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ user, onRefetch }) => {
   const dispatch = useDispatch<AppDispatch>()
-  const { user: currentUser } = useSelector((state: RootState) => state.auth)
-  const { data: freshUser, refetch } = useGetMeQuery()
   const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation()
-  const [logoutTrigger] = useLogoutMutation()
 
-  const user = freshUser || currentUser
-
-  const [email, setEmail] = useState('')
-  const [bio, setBio] = useState('')
+  const [email, setEmail] = useState(user.email || '')
+  const [bio, setBio] = useState(user.bio || '')
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (user) {
-      setEmail(user.email || '')
-      setBio(user.bio || '')
-    }
-  }, [user])
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -70,12 +88,117 @@ export const ProfilePage: React.FC = () => {
       setCurrentPassword('')
       setNewPassword('')
       setConfirmPassword('')
-      refetch()
+      onRefetch()
     } catch (err: any) {
       const message = err?.data?.detail || 'Failed to update profile'
       setError(message)
     }
   }
+
+  return (
+    <Card className="shadow-xs">
+      <CardHeader>
+        <CardTitle>Edit Profile & Security</CardTitle>
+        <CardDescription>
+          Update your public profile details or change your password
+        </CardDescription>
+      </CardHeader>
+      <form onSubmit={handleUpdate}>
+        <CardContent className="space-y-5">
+          {error && (
+            <div className="flex items-center gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+              <AlertCircle className="h-4 w-4 shrink-0" />
+              <span>{error}</span>
+            </div>
+          )}
+          {success && (
+            <div className="flex items-center gap-2 rounded-md bg-emerald-500/10 p-3 text-sm text-emerald-600 dark:text-emerald-400">
+              <CheckCircle2 className="h-4 w-4 shrink-0" />
+              <span>{success}</span>
+            </div>
+          )}
+
+          <div className="space-y-2">
+            <Label htmlFor="prof-email">Email Address</Label>
+            <Input
+              id="prof-email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="prof-bio">Bio / About Me</Label>
+            <Textarea
+              id="prof-bio"
+              placeholder="Tell others a bit about your interests or background..."
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              rows={3}
+              maxLength={500}
+            />
+          </div>
+
+          <div className="border-t border-border pt-4">
+            <h4 className="text-sm font-semibold flex items-center gap-1.5 text-foreground mb-3">
+              <Lock className="h-4 w-4 text-primary" />
+              Change Password (Optional)
+            </h4>
+            <div className="space-y-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="prof-current-pwd">Current Password</Label>
+                <Input
+                  id="prof-current-pwd"
+                  type="password"
+                  placeholder="Enter current password to change"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label htmlFor="prof-new-pwd">New Password</Label>
+                  <Input
+                    id="prof-new-pwd"
+                    type="password"
+                    placeholder="Min 6 characters"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="prof-confirm-pwd">Confirm New Password</Label>
+                  <Input
+                    id="prof-confirm-pwd"
+                    type="password"
+                    placeholder="Confirm new password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+        <CardFooter className="flex justify-end gap-3">
+          <Button type="submit" disabled={isUpdating} className="font-semibold">
+            {isUpdating ? 'Saving...' : 'Save Changes'}
+          </Button>
+        </CardFooter>
+      </form>
+    </Card>
+  )
+}
+
+export const ProfilePage: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>()
+  const { user: currentUser } = useSelector((state: RootState) => state.auth)
+  const { data: freshUser, refetch } = useGetMeQuery()
+  const [logoutTrigger] = useLogoutMutation()
+
+  const user = freshUser || currentUser
 
   const handleLogout = async () => {
     try {
@@ -133,100 +256,7 @@ export const ProfilePage: React.FC = () => {
       </Card>
 
       {/* Edit Profile & Password Form */}
-      <Card className="shadow-xs">
-        <CardHeader>
-          <CardTitle>Edit Profile & Security</CardTitle>
-          <CardDescription>
-            Update your public profile details or change your password
-          </CardDescription>
-        </CardHeader>
-        <form onSubmit={handleUpdate}>
-          <CardContent className="space-y-5">
-            {error && (
-              <div className="flex items-center gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-                <AlertCircle className="h-4 w-4 shrink-0" />
-                <span>{error}</span>
-              </div>
-            )}
-            {success && (
-              <div className="flex items-center gap-2 rounded-md bg-emerald-500/10 p-3 text-sm text-emerald-600 dark:text-emerald-400">
-                <CheckCircle2 className="h-4 w-4 shrink-0" />
-                <span>{success}</span>
-              </div>
-            )}
-
-            <div className="space-y-2">
-              <Label htmlFor="prof-email">Email Address</Label>
-              <Input
-                id="prof-email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="prof-bio">Bio / About Me</Label>
-              <Textarea
-                id="prof-bio"
-                placeholder="Tell others a bit about your interests or background..."
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-                rows={3}
-                maxLength={500}
-              />
-            </div>
-
-            <div className="border-t border-border pt-4">
-              <h4 className="text-sm font-semibold flex items-center gap-1.5 text-foreground mb-3">
-                <Lock className="h-4 w-4 text-primary" />
-                Change Password (Optional)
-              </h4>
-              <div className="space-y-3">
-                <div className="space-y-1.5">
-                  <Label htmlFor="prof-current-pwd">Current Password</Label>
-                  <Input
-                    id="prof-current-pwd"
-                    type="password"
-                    placeholder="Enter current password to change"
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                  />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="prof-new-pwd">New Password</Label>
-                    <Input
-                      id="prof-new-pwd"
-                      type="password"
-                      placeholder="Min 6 characters"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="prof-confirm-pwd">Confirm New Password</Label>
-                    <Input
-                      id="prof-confirm-pwd"
-                      type="password"
-                      placeholder="Confirm new password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter className="flex justify-end gap-3">
-            <Button type="submit" disabled={isUpdating} className="font-semibold">
-              {isUpdating ? 'Saving...' : 'Save Changes'}
-            </Button>
-          </CardFooter>
-        </form>
-      </Card>
+      <ProfileEditForm key={user.id} user={user} onRefetch={refetch} />
     </div>
   )
 }
-

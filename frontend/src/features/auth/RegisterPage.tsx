@@ -5,7 +5,14 @@ import { setCredentials } from '@/store/slices/authSlice'
 import { navigate } from '@/store/slices/navigationSlice'
 import { addToast } from '@/store/slices/uiSlice'
 import { useRegisterMutation } from '@/store/api/authApi'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -132,11 +139,7 @@ export const RegisterPage: React.FC = () => {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
-            <Button
-              type="submit"
-              className="w-full font-semibold"
-              disabled={isLoading}
-            >
+            <Button type="submit" className="w-full font-semibold" disabled={isLoading}>
               {isLoading ? 'Creating Account...' : 'Sign Up'}
             </Button>
             <p className="text-center text-sm text-muted-foreground">
@@ -155,4 +158,3 @@ export const RegisterPage: React.FC = () => {
     </div>
   )
 }
-

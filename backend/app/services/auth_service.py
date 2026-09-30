@@ -1,7 +1,7 @@
-from datetime import datetime, timezone
 import hashlib
 import hmac
 import secrets
+from datetime import datetime, timezone
 
 from fastapi import HTTPException, status
 
@@ -76,7 +76,9 @@ class AuthService:
 
     def login(self, dto: UserLogin) -> AuthTokenResponse:
         identifier = dto.username_or_email.strip()
-        user = self._user_repo.get_by_username(identifier) or self._user_repo.get_by_email(identifier)
+        user = self._user_repo.get_by_username(identifier) or self._user_repo.get_by_email(
+            identifier
+        )
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -146,4 +148,3 @@ class AuthService:
             self._user_repo.update(user)
 
         return UserResponse.from_db(user)
-

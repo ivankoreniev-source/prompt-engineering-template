@@ -1,8 +1,8 @@
-from datetime import datetime, timezone
 import re
+from datetime import datetime, timezone
 from uuid import uuid4
 
-from pydantic import BaseModel, EmailStr, Field, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 def _utc_now() -> datetime:
@@ -23,7 +23,10 @@ class UserRegister(BaseModel):
     def validate_username(cls, value: str) -> str:
         trimmed = value.strip()
         if not USERNAME_REGEX.match(trimmed):
-            raise ValueError("Username must be 3-30 characters and contain only letters, numbers, and underscores")
+            raise ValueError(
+                "Username must be 3-30 characters and contain only "
+                "letters, numbers, and underscores"
+            )
         return trimmed
 
     @field_validator("email")
@@ -107,4 +110,3 @@ class AuthTokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     user: UserResponse
-

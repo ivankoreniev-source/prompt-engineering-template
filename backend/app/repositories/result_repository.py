@@ -29,4 +29,3 @@ class ResultRepository:
         results.append(result)
         write_list_file(self._file_path, results)
         return result
-

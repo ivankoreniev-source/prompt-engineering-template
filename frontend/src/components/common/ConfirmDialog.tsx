@@ -40,20 +40,10 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
           <DialogDescription className="mt-2">{description}</DialogDescription>
         </DialogHeader>
         <DialogFooter className="mt-4 gap-2 sm:gap-0">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onCancel}
-            disabled={loading}
-          >
+          <Button type="button" variant="outline" onClick={onCancel} disabled={loading}>
             {cancelText}
           </Button>
-          <Button
-            type="button"
-            variant={variant}
-            onClick={onConfirm}
-            disabled={loading}
-          >
+          <Button type="button" variant={variant} onClick={onConfirm} disabled={loading}>
             {loading ? 'Processing...' : confirmText}
           </Button>
         </DialogFooter>
@@ -61,4 +51,3 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
     </Dialog>
   )
 }
-

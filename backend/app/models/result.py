@@ -101,4 +101,3 @@ class ResultDetailResponse(BaseModel):
             breakdown=item.breakdown,
             completed_at=item.completed_at,
         )
-

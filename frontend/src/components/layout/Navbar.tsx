@@ -21,9 +21,7 @@ import {
 export const Navbar: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>()
   const { user, isAuthenticated } = useSelector((state: RootState) => state.auth)
-  const currentView = useSelector(
-    (state: RootState) => state.navigation.currentView,
-  )
+  const currentView = useSelector((state: RootState) => state.navigation.currentView)
   const [logoutTrigger] = useLogoutMutation()
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false)
 
@@ -80,10 +78,7 @@ export const Navbar: React.FC = () => {
             <Layers className="h-4 w-4" />
             Dashboard
           </button>
-          <button
-            onClick={() => handleNav('tests')}
-            className={linkClass('tests')}
-          >
+          <button onClick={() => handleNav('tests')} className={linkClass('tests')}>
             <BookOpen className="h-4 w-4" />
             Explore Tests
           </button>
@@ -145,18 +140,10 @@ export const Navbar: React.FC = () => {
             </>
           ) : (
             <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleNav('login')}
-              >
+              <Button variant="ghost" size="sm" onClick={() => handleNav('login')}>
                 Log In
               </Button>
-              <Button
-                variant="default"
-                size="sm"
-                onClick={() => handleNav('register')}
-              >
+              <Button variant="default" size="sm" onClick={() => handleNav('register')}>
                 Sign Up
               </Button>
             </div>
@@ -171,11 +158,7 @@ export const Navbar: React.FC = () => {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
           >
-            {mobileMenuOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
+            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </Button>
         </div>
       </div>
@@ -191,10 +174,7 @@ export const Navbar: React.FC = () => {
               <Layers className="h-4 w-4" />
               Dashboard
             </button>
-            <button
-              onClick={() => handleNav('tests')}
-              className={linkClass('tests')}
-            >
+            <button onClick={() => handleNav('tests')} className={linkClass('tests')}>
               <BookOpen className="h-4 w-4" />
               Explore Tests
             </button>
@@ -260,4 +240,3 @@ export const Navbar: React.FC = () => {
     </header>
   )
 }
-

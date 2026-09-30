@@ -1,24 +1,24 @@
+from collections.abc import Generator
+from pathlib import Path
+
 import pytest
 from fastapi.testclient import TestClient
-from pathlib import Path
-import tempfile
-import shutil
 
-from app.main import app
 from app.dependencies import (
-    get_user_repository,
+    get_result_repository,
     get_session_repository,
     get_test_repository,
-    get_result_repository,
+    get_user_repository,
 )
-from app.repositories.user_repository import UserRepository
+from app.main import app
+from app.repositories.result_repository import ResultRepository
 from app.repositories.session_repository import SessionRepository
 from app.repositories.test_repository import TestRepository
-from app.repositories.result_repository import ResultRepository
+from app.repositories.user_repository import UserRepository
 
 
 @pytest.fixture(autouse=True)
-def isolated_storage(tmp_path: Path):
+def isolated_storage(tmp_path: Path) -> Generator[None, None, None]:
     user_repo = UserRepository(tmp_path / "users.json")
     session_repo = SessionRepository(tmp_path / "sessions.json")
     test_repo = TestRepository(tmp_path / "tests.json")
@@ -35,11 +35,11 @@ def isolated_storage(tmp_path: Path):
 
 
 @pytest.fixture
-def client():
+def client() -> TestClient:
     return TestClient(app)
 
 
-def test_auth_workflow(client: TestClient):
+def test_auth_workflow(client: TestClient) -> None:
     # 1. Register Alice
     reg_resp = client.post(
         "/api/auth/register",
@@ -123,7 +123,7 @@ def test_auth_workflow(client: TestClient):
     assert fail_me.status_code == 401
 
 
-def test_test_management_and_scoring(client: TestClient):
+def test_test_management_and_scoring(client: TestClient) -> None:
     # Register Alice (creator)
     alice_reg = client.post(
         "/api/auth/register",
@@ -293,7 +293,7 @@ def test_test_management_and_scoring(client: TestClient):
     assert bob_del.status_code == 403
 
 
-def test_publishing_validation_rules(client: TestClient):
+def test_publishing_validation_rules(client: TestClient) -> None:
     # Register user
     reg = client.post(
         "/api/auth/register",
@@ -374,7 +374,7 @@ def test_publishing_validation_rules(client: TestClient):
     assert unpub.json()["is_published"] is False
 
 
-def test_password_change(client: TestClient):
+def test_password_change(client: TestClient) -> None:
     reg = client.post(
         "/api/auth/register",
         json={
@@ -408,3 +408,171 @@ def test_password_change(client: TestClient):
         json={"username_or_email": "pwd_user", "password": "newpassword123"},
     )
     assert login_new.status_code == 200
+
+
+def test_catalog_filtering(client: TestClient) -> None:
+    # Register author
+    author = client.post(
+        "/api/auth/register",
+        json={
+            "username": "filter_author",
+            "email": "filter@example.com",
+            "password": "password123",
+            "password_confirm": "password123",
+        },
+    ).json()
+    token = author["access_token"]
+
+    # Create & publish Test A (Python, Easy)
+    t_a = client.post(
+        "/api/tests",
+        headers={"Authorization": f"Bearer {token}"},
+        json={
+            "title": "Python Basics",
+            "description": "Learn basic Python variables",
+            "category": "Programming",
+            "difficulty": "easy",
+            "questions": [
+                {
+                    "question_text": "What is Python?",
+                    "question_type": "single_choice",
+                    "options": [{"id": "o1", "text": "Language"}, {"id": "o2", "text": "Snake"}],
+                    "correct_answers": ["o1"],
+                }
+            ],
+        },
+    ).json()
+    client.post(f"/api/tests/{t_a['id']}/publish", headers={"Authorization": f"Bearer {token}"})
+
+    # Create & publish Test B (World War, Hard)
+    t_b = client.post(
+        "/api/tests",
+        headers={"Authorization": f"Bearer {token}"},
+        json={
+            "title": "World History",
+            "description": "Events of 20th century",
+            "category": "History",
+            "difficulty": "hard",
+            "questions": [
+                {
+                    "question_text": "When was WW2?",
+                    "question_type": "single_choice",
+                    "options": [{"id": "o1", "text": "1939"}, {"id": "o2", "text": "1914"}],
+                    "correct_answers": ["o1"],
+                }
+            ],
+        },
+    ).json()
+    client.post(f"/api/tests/{t_b['id']}/publish", headers={"Authorization": f"Bearer {token}"})
+
+    # Filter by category
+    resp_cat = client.get("/api/tests?category=Programming")
+    assert resp_cat.status_code == 200
+    ids = [t["id"] for t in resp_cat.json()]
+    assert t_a["id"] in ids
+    assert t_b["id"] not in ids
+
+    # Filter by difficulty
+    resp_diff = client.get("/api/tests?difficulty=hard")
+    assert resp_diff.status_code == 200
+    ids_diff = [t["id"] for t in resp_diff.json()]
+    assert t_b["id"] in ids_diff
+    assert t_a["id"] not in ids_diff
+
+    # Search keyword
+    resp_search = client.get("/api/tests?search=python")
+    assert resp_search.status_code == 200
+    assert len(resp_search.json()) == 1
+    assert resp_search.json()[0]["id"] == t_a["id"]
+
+
+def test_multiple_choice_scoring_edge_cases(client: TestClient) -> None:
+    # Register author & taker
+    author = client.post(
+        "/api/auth/register",
+        json={
+            "username": "scorer_author",
+            "email": "scorer@example.com",
+            "password": "password123",
+            "password_confirm": "password123",
+        },
+    ).json()
+    author_tok = author["access_token"]
+
+    taker = client.post(
+        "/api/auth/register",
+        json={
+            "username": "scorer_taker",
+            "email": "taker@example.com",
+            "password": "password123",
+            "password_confirm": "password123",
+        },
+    ).json()
+    taker_tok = taker["access_token"]
+
+    # Test with 1 multiple choice question (options A, B, C, D; correct are A & C)
+    test_res = client.post(
+        "/api/tests",
+        headers={"Authorization": f"Bearer {author_tok}"},
+        json={
+            "title": "Exact Set Matching Test",
+            "questions": [
+                {
+                    "question_text": "Select A and C",
+                    "question_type": "multiple_choice",
+                    "options": [
+                        {"id": "A", "text": "Option A"},
+                        {"id": "B", "text": "Option B"},
+                        {"id": "C", "text": "Option C"},
+                        {"id": "D", "text": "Option D"},
+                    ],
+                    "correct_answers": ["A", "C"],
+                    "explanation": "A and C are correct",
+                }
+            ],
+        },
+    ).json()
+    test_id = test_res["id"]
+    client.post(f"/api/tests/{test_id}/publish", headers={"Authorization": f"Bearer {author_tok}"})
+
+    # Taker submits only A (partial answer -> should NOT be awarded point)
+    sub1 = client.post(
+        f"/api/tests/{test_id}/submit",
+        headers={"Authorization": f"Bearer {taker_tok}"},
+        json={
+            "answers": [
+                {"question_id": test_res["questions"][0]["id"], "selected_option_ids": ["A"]}
+            ]
+        },
+    ).json()
+    assert sub1["score"] == 0
+    assert sub1["passed"] is False
+
+    # Taker submits A, C, and D (extra incorrect answer -> should NOT be awarded point)
+    sub2 = client.post(
+        f"/api/tests/{test_id}/submit",
+        headers={"Authorization": f"Bearer {taker_tok}"},
+        json={
+            "answers": [
+                {
+                    "question_id": test_res["questions"][0]["id"],
+                    "selected_option_ids": ["A", "C", "D"],
+                }
+            ]
+        },
+    ).json()
+    assert sub2["score"] == 0
+
+    # Taker submits exactly C and A (order reversed -> should be awarded point!)
+    sub3 = client.post(
+        f"/api/tests/{test_id}/submit",
+        headers={"Authorization": f"Bearer {taker_tok}"},
+        json={
+            "answers": [
+                {"question_id": test_res["questions"][0]["id"], "selected_option_ids": ["C", "A"]}
+            ]
+        },
+    ).json()
+    assert sub3["score"] == 1
+    assert sub3["percentage"] == 100.0
+    assert sub3["passed"] is True

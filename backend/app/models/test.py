@@ -186,4 +186,3 @@ class TestTakeResponse(BaseModel):
                 for q in item.questions
             ],
         )
-

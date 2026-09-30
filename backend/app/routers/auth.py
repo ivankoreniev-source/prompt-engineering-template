@@ -74,4 +74,3 @@ def update_profile(
     service: AuthService = Depends(get_auth_service),
 ) -> UserResponse:
     return service.update_profile(current_user, dto)
-

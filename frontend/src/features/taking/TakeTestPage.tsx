@@ -5,24 +5,28 @@ import { navigate } from '@/store/slices/navigationSlice'
 import { addToast } from '@/store/slices/uiSlice'
 import { useGetTestForTakingQuery } from '@/store/api/testsApi'
 import { useSubmitTestMutation } from '@/store/api/resultsApi'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ConfirmDialog } from '@/components/common/ConfirmDialog'
-import {
-  AlertCircle,
-  ArrowLeft,
-  ArrowRight,
-  Check,
-  Layers,
-  Send,
-} from 'lucide-react'
+import { AlertCircle, ArrowLeft, ArrowRight, Check, Layers, Send } from 'lucide-react'
 
 export const TakeTestPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>()
   const testId = useSelector((state: RootState) => state.navigation.param)
 
-  const { data: test, isLoading, error } = useGetTestForTakingQuery(testId || '', {
+  const {
+    data: test,
+    isLoading,
+    error,
+  } = useGetTestForTakingQuery(testId || '', {
     skip: !testId,
   })
 
@@ -58,7 +62,8 @@ export const TakeTestPage: React.FC = () => {
 
   const answeredCount = Object.values(answers).filter((arr) => arr.length > 0).length
   const totalCount = questions.length
-  const progressPercent = totalCount > 0 ? Math.round((answeredCount / totalCount) * 100) : 0
+  const progressPercent =
+    totalCount > 0 ? Math.round((answeredCount / totalCount) * 100) : 0
 
   const handleFinalSubmit = async () => {
     if (!testId) return
@@ -100,10 +105,7 @@ export const TakeTestPage: React.FC = () => {
           <p className="text-sm text-muted-foreground mt-2">
             This test may not exist or has not been published yet.
           </p>
-          <Button
-            onClick={() => dispatch(navigate({ view: 'tests' }))}
-            className="mt-6"
-          >
+          <Button onClick={() => dispatch(navigate({ view: 'tests' }))} className="mt-6">
             Back to Tests Catalog
           </Button>
         </Card>
@@ -124,7 +126,9 @@ export const TakeTestPage: React.FC = () => {
               {test.difficulty}
             </Badge>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">{test.title}</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            {test.title}
+          </h1>
         </div>
 
         <Button
@@ -144,7 +148,9 @@ export const TakeTestPage: React.FC = () => {
           <span>
             Progress: {answeredCount} of {totalCount} answered ({progressPercent}%)
           </span>
-          <span>Question {currentQuestionIndex + 1} of {totalCount}</span>
+          <span>
+            Question {currentQuestionIndex + 1} of {totalCount}
+          </span>
         </div>
         <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
           <div
@@ -189,7 +195,8 @@ export const TakeTestPage: React.FC = () => {
           <CardHeader>
             <CardTitle>Review Your Answers</CardTitle>
             <CardDescription>
-              Check your progress before final submission. Click on any question to modify your answer.
+              Check your progress before final submission. Click on any question to modify
+              your answer.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -287,9 +294,7 @@ export const TakeTestPage: React.FC = () => {
                           : 'border-input'
                       }`}
                     >
-                      {isSelected && (
-                        <Check className="h-3.5 w-3.5 stroke-[3]" />
-                      )}
+                      {isSelected && <Check className="h-3.5 w-3.5 stroke-[3]" />}
                     </div>
 
                     <span className="text-sm flex-1">{option.text}</span>

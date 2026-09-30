@@ -6,13 +6,7 @@ import { useGetMyResultsQuery } from '@/store/api/resultsApi'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import {
-  ArrowRight,
-  Calendar,
-  CheckCircle,
-  Compass,
-  TrendingUp,
-} from 'lucide-react'
+import { ArrowRight, Calendar, CheckCircle, Compass, TrendingUp } from 'lucide-react'
 
 export const MyResultsPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>()
@@ -28,7 +22,8 @@ export const MyResultsPage: React.FC = () => {
             My Test History & Results
           </h1>
           <p className="text-muted-foreground mt-1 text-sm">
-            Review past test submissions, check answers, and track your knowledge scores over time.
+            Review past test submissions, check answers, and track your knowledge scores
+            over time.
           </p>
         </div>
         <Button
@@ -57,7 +52,8 @@ export const MyResultsPage: React.FC = () => {
           </div>
           <h3 className="text-lg font-semibold">No test attempts yet</h3>
           <p className="text-sm text-muted-foreground mt-1 max-w-sm mx-auto">
-            Take a published quiz from the catalog to see your results and evaluation breakdown here.
+            Take a published quiz from the catalog to see your results and evaluation
+            breakdown here.
           </p>
           <Button
             onClick={() => dispatch(navigate({ view: 'tests' }))}
@@ -77,7 +73,10 @@ export const MyResultsPage: React.FC = () => {
             >
               <div className="space-y-1.5 flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <Badge variant={res.passed ? 'success' : 'destructive'} className="text-xs">
+                  <Badge
+                    variant={res.passed ? 'success' : 'destructive'}
+                    className="text-xs"
+                  >
                     {res.passed ? 'Passed' : 'Failed'}
                   </Badge>
                   <span className="text-xs text-muted-foreground flex items-center gap-1">
@@ -91,7 +90,8 @@ export const MyResultsPage: React.FC = () => {
                 </h3>
 
                 <p className="text-xs text-muted-foreground">
-                  Score: <span className="font-semibold text-foreground">{res.score}</span> /{' '}
+                  Score:{' '}
+                  <span className="font-semibold text-foreground">{res.score}</span> /{' '}
                   {res.total_questions} questions answered correctly
                 </p>
               </div>

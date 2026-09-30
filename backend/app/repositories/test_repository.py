@@ -65,4 +65,3 @@ class TestRepository:
             return False
         write_list_file(self._file_path, filtered)
         return True
-

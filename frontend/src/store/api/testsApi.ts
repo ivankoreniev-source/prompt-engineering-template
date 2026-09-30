@@ -42,10 +42,7 @@ export const testsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['MyTests'],
     }),
-    updateTest: builder.mutation<
-      TestDetail,
-      { id: string; payload: UpdateTestPayload }
-    >({
+    updateTest: builder.mutation<TestDetail, { id: string; payload: UpdateTestPayload }>({
       query: ({ id, payload }) => ({
         url: `/tests/${id}`,
         method: 'PUT',
@@ -100,4 +97,3 @@ export const {
   useUnpublishTestMutation,
   useDeleteTestMutation,
 } = testsApi
-

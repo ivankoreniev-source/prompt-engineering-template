@@ -3,7 +3,14 @@ import { useDispatch, useSelector } from 'react-redux'
 import type { AppDispatch, RootState } from '@/store/store'
 import { navigate } from '@/store/slices/navigationSlice'
 import { useGetResultByIdQuery } from '@/store/api/resultsApi'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -23,7 +30,11 @@ export const ResultDetailPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>()
   const resultId = useSelector((state: RootState) => state.navigation.param)
 
-  const { data: result, isLoading, error } = useGetResultByIdQuery(resultId || '', {
+  const {
+    data: result,
+    isLoading,
+    error,
+  } = useGetResultByIdQuery(resultId || '', {
     skip: !resultId,
   })
 
@@ -104,9 +115,7 @@ export const ResultDetailPage: React.FC = () => {
           <CardTitle className="text-2xl font-extrabold mt-3">
             {result.test_title}
           </CardTitle>
-          <CardDescription>
-            Performance breakdown and answer evaluation
-          </CardDescription>
+          <CardDescription>Performance breakdown and answer evaluation</CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-6 pt-4">
@@ -152,10 +161,7 @@ export const ResultDetailPage: React.FC = () => {
             <RotateCcw className="h-4 w-4" />
             Retake Test
           </Button>
-          <Button
-            onClick={() => dispatch(navigate({ view: 'tests' }))}
-            className="gap-2"
-          >
+          <Button onClick={() => dispatch(navigate({ view: 'tests' }))} className="gap-2">
             <Compass className="h-4 w-4" />
             Explore More Tests
           </Button>
@@ -183,7 +189,10 @@ export const ResultDetailPage: React.FC = () => {
               >
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between gap-2">
-                    <Badge variant={q.is_correct ? 'success' : 'destructive'} className="text-xs">
+                    <Badge
+                      variant={q.is_correct ? 'success' : 'destructive'}
+                      className="text-xs"
+                    >
                       {q.is_correct ? 'Correct' : 'Incorrect'}
                     </Badge>
                     <span className="text-xs text-muted-foreground capitalize font-medium">
@@ -251,7 +260,9 @@ export const ResultDetailPage: React.FC = () => {
                         <HelpCircle className="h-3.5 w-3.5 text-primary" />
                         Explanation:
                       </div>
-                      <p className="text-muted-foreground leading-relaxed">{q.explanation}</p>
+                      <p className="text-muted-foreground leading-relaxed">
+                        {q.explanation}
+                      </p>
                     </div>
                   )}
                 </CardContent>

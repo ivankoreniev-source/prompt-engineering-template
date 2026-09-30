@@ -49,4 +49,3 @@ def get_result(
     service: ResultService = Depends(get_result_service),
 ) -> ResultDetailResponse:
     return service.get_result_by_id(result_id, current_user)
-

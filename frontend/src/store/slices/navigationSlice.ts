@@ -61,7 +61,11 @@ const navigationSlice = createSlice({
   reducers: {
     navigate(
       state,
-      action: PayloadAction<{ view: AppView; param?: string | null; updateHash?: boolean }>,
+      action: PayloadAction<{
+        view: AppView
+        param?: string | null
+        updateHash?: boolean
+      }>,
     ) {
       state.currentView = action.payload.view
       state.param = action.payload.param || null
@@ -86,4 +90,3 @@ const navigationSlice = createSlice({
 export const { navigate, syncFromHash } = navigationSlice.actions
 
 export default navigationSlice.reducer
-

@@ -106,7 +106,10 @@ export const App: React.FC = () => {
 
       <footer className="border-t border-border bg-card/50 py-8 text-center text-xs text-muted-foreground">
         <div className="mx-auto max-w-7xl px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>© 2026 QuizCraft. All rights reserved. Web Platform for Creating & Taking Tests.</p>
+          <p>
+            © 2026 QuizCraft. All rights reserved. Web Platform for Creating & Taking
+            Tests.
+          </p>
           <div className="flex items-center gap-4">
             <span>FastAPI Backend</span>
             <span>•</span>

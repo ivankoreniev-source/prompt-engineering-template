@@ -1,9 +1,5 @@
 import { baseApi } from './baseApi'
-import type {
-  ResultDetail,
-  ResultSummary,
-  TestSubmissionPayload,
-} from '@/types/result'
+import type { ResultDetail, ResultSummary, TestSubmissionPayload } from '@/types/result'
 
 export const resultsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -29,9 +25,5 @@ export const resultsApi = baseApi.injectEndpoints({
   }),
 })
 
-export const {
-  useSubmitTestMutation,
-  useGetMyResultsQuery,
-  useGetResultByIdQuery,
-} = resultsApi
-
+export const { useSubmitTestMutation, useGetMyResultsQuery, useGetResultByIdQuery } =
+  resultsApi

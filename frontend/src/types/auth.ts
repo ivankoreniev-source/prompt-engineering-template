@@ -30,4 +30,3 @@ export interface UpdateProfilePayload {
   current_password?: string
   new_password?: string
 }
-

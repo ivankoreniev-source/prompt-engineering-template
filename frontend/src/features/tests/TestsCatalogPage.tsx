@@ -3,7 +3,14 @@ import { useDispatch, useSelector } from 'react-redux'
 import type { AppDispatch, RootState } from '@/store/store'
 import { navigate } from '@/store/slices/navigationSlice'
 import { useGetPublishedTestsQuery } from '@/store/api/testsApi'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -20,9 +27,7 @@ import {
 
 export const TestsCatalogPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>()
-  const isAuthenticated = useSelector(
-    (state: RootState) => state.auth.isAuthenticated,
-  )
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated)
 
   const [search, setSearch] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
@@ -66,7 +71,8 @@ export const TestsCatalogPage: React.FC = () => {
             Explore Published Tests
           </h1>
           <p className="text-muted-foreground mt-1 text-sm">
-            Browse through hundreds of user-created tests, sharpen your skills, and challenge your mind.
+            Browse through hundreds of user-created tests, sharpen your skills, and
+            challenge your mind.
           </p>
         </div>
         {isAuthenticated && (
@@ -143,7 +149,8 @@ export const TestsCatalogPage: React.FC = () => {
           </div>
           <h3 className="text-lg font-semibold">No tests match your filter</h3>
           <p className="text-sm text-muted-foreground mt-1 max-w-sm mx-auto">
-            Try adjusting your search query, selecting different categories, or create a brand new test.
+            Try adjusting your search query, selecting different categories, or create a
+            brand new test.
           </p>
           {(search || selectedCategory !== 'all' || selectedDifficulty !== 'all') && (
             <Button

@@ -5,7 +5,14 @@ import { setCredentials } from '@/store/slices/authSlice'
 import { navigate } from '@/store/slices/navigationSlice'
 import { addToast } from '@/store/slices/uiSlice'
 import { useLoginMutation } from '@/store/api/authApi'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -35,7 +42,9 @@ export const LoginPage: React.FC = () => {
       }).unwrap()
 
       dispatch(setCredentials(response))
-      dispatch(addToast({ type: 'success', text: `Welcome back, ${response.user.username}!` }))
+      dispatch(
+        addToast({ type: 'success', text: `Welcome back, ${response.user.username}!` }),
+      )
       dispatch(navigate({ view: 'dashboard' }))
     } catch (err: any) {
       const message =
@@ -51,7 +60,9 @@ export const LoginPage: React.FC = () => {
           <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
             <LogIn className="h-6 w-6" />
           </div>
-          <CardTitle className="text-2xl font-bold tracking-tight">Log in to QuizCraft</CardTitle>
+          <CardTitle className="text-2xl font-bold tracking-tight">
+            Log in to QuizCraft
+          </CardTitle>
           <CardDescription>
             Enter your credentials to access your tests and results
           </CardDescription>
@@ -89,11 +100,7 @@ export const LoginPage: React.FC = () => {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
-            <Button
-              type="submit"
-              className="w-full font-semibold"
-              disabled={isLoading}
-            >
+            <Button type="submit" className="w-full font-semibold" disabled={isLoading}>
               {isLoading ? 'Logging in...' : 'Log In'}
             </Button>
             <p className="text-center text-sm text-muted-foreground">
@@ -112,4 +119,3 @@ export const LoginPage: React.FC = () => {
     </div>
   )
 }
-

@@ -139,12 +139,18 @@ class TestService:
             if len(q.options) < 2:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=f"Question #{idx} ('{q.question_text[:30]}...') must have at least 2 answer options",
+                    detail=(
+                        f"Question #{idx} ('{q.question_text[:30]}...') "
+                        "must have at least 2 answer options"
+                    ),
                 )
             if not q.correct_answers or len(q.correct_answers) == 0:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=f"Question #{idx} ('{q.question_text[:30]}...') has no correct answer configured",
+                    detail=(
+                        f"Question #{idx} ('{q.question_text[:30]}...') "
+                        "has no correct answer configured"
+                    ),
                 )
 
             valid_option_ids = {opt.id for opt in q.options}
@@ -155,18 +161,19 @@ class TestService:
                         detail=f"Question #{idx} references an invalid correct answer option",
                     )
 
-            if q.question_type in (QuestionType.SINGLE_CHOICE, QuestionType.TRUE_FALSE):
-                if len(q.correct_answers) != 1:
-                    raise HTTPException(
-                        status_code=status.HTTP_400_BAD_REQUEST,
-                        detail=f"Question #{idx} must have exactly one correct answer",
-                    )
-            elif q.question_type == QuestionType.MULTIPLE_CHOICE:
-                if len(q.correct_answers) < 1:
-                    raise HTTPException(
-                        status_code=status.HTTP_400_BAD_REQUEST,
-                        detail=f"Question #{idx} must have at least one correct answer",
-                    )
+            if (
+                q.question_type in (QuestionType.SINGLE_CHOICE, QuestionType.TRUE_FALSE)
+                and len(q.correct_answers) != 1
+            ):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Question #{idx} must have exactly one correct answer",
+                )
+            if q.question_type == QuestionType.MULTIPLE_CHOICE and len(q.correct_answers) < 1:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Question #{idx} must have at least one correct answer",
+                )
 
     def publish_test(self, test_id: str, user: UserInDb) -> TestDetailResponse:
         test = self._test_repo.get_by_id(test_id)
@@ -244,4 +251,3 @@ class TestService:
                 detail="This test is not published and cannot be taken",
             )
         return TestTakeResponse.from_db(test)
-

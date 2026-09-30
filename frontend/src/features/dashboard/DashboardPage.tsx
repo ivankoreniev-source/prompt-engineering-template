@@ -4,7 +4,14 @@ import type { AppDispatch, RootState } from '@/store/store'
 import { navigate } from '@/store/slices/navigationSlice'
 import { useGetPublishedTestsQuery } from '@/store/api/testsApi'
 import { useGetMyResultsQuery } from '@/store/api/resultsApi'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -59,7 +66,8 @@ export const DashboardPage: React.FC = () => {
               : 'Create, Share, and Master Tests with QuizCraft'}
           </h1>
           <p className="text-white/80 text-base leading-relaxed">
-            Build customized quizzes with single choice, multiple choice, and true/false questions, or challenge yourself with tests created by the community.
+            Build customized quizzes with single choice, multiple choice, and true/false
+            questions, or challenge yourself with tests created by the community.
           </p>
           <div className="pt-2 flex flex-wrap items-center gap-3">
             <Button
@@ -101,7 +109,10 @@ export const DashboardPage: React.FC = () => {
 
       {/* Quick Action Tiles */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-primary" onClick={() => dispatch(navigate({ view: 'tests' }))}>
+        <Card
+          className="hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-primary"
+          onClick={() => dispatch(navigate({ view: 'tests' }))}
+        >
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-base font-semibold">Browse Tests</CardTitle>
             <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
@@ -118,7 +129,12 @@ export const DashboardPage: React.FC = () => {
           </CardFooter>
         </Card>
 
-        <Card className="hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-indigo-500" onClick={() => dispatch(navigate({ view: isAuthenticated ? 'create-test' : 'login' }))}>
+        <Card
+          className="hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-indigo-500"
+          onClick={() =>
+            dispatch(navigate({ view: isAuthenticated ? 'create-test' : 'login' }))
+          }
+        >
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-base font-semibold">Author a Test</CardTitle>
             <div className="h-8 w-8 rounded-lg bg-indigo-500/10 text-indigo-600 flex items-center justify-center">
@@ -127,7 +143,8 @@ export const DashboardPage: React.FC = () => {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              Design questions with automatic grading, custom options, and detailed answer explanations.
+              Design questions with automatic grading, custom options, and detailed answer
+              explanations.
             </p>
           </CardContent>
           <CardFooter className="text-xs text-indigo-600 font-medium flex items-center gap-1">
@@ -135,7 +152,12 @@ export const DashboardPage: React.FC = () => {
           </CardFooter>
         </Card>
 
-        <Card className="hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-emerald-500" onClick={() => dispatch(navigate({ view: isAuthenticated ? 'my-results' : 'login' }))}>
+        <Card
+          className="hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-emerald-500"
+          onClick={() =>
+            dispatch(navigate({ view: isAuthenticated ? 'my-results' : 'login' }))
+          }
+        >
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-base font-semibold">Track Progress</CardTitle>
             <div className="h-8 w-8 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
@@ -144,7 +166,8 @@ export const DashboardPage: React.FC = () => {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              Inspect test attempts, review correct answers, and monitor knowledge improvements.
+              Inspect test attempts, review correct answers, and monitor knowledge
+              improvements.
             </p>
           </CardContent>
           <CardFooter className="text-xs text-emerald-600 font-medium flex items-center gap-1">
@@ -179,7 +202,10 @@ export const DashboardPage: React.FC = () => {
         {testsLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {[1, 2, 3, 4].map((n) => (
-              <div key={n} className="h-48 rounded-xl border border-border bg-muted/30 animate-pulse" />
+              <div
+                key={n}
+                className="h-48 rounded-xl border border-border bg-muted/30 animate-pulse"
+              />
             ))}
           </div>
         ) : recentTests.length === 0 ? (
@@ -189,7 +215,8 @@ export const DashboardPage: React.FC = () => {
             </div>
             <h3 className="text-base font-semibold">No published tests yet</h3>
             <p className="text-sm text-muted-foreground mt-1 max-w-sm mx-auto">
-              Be the first creator to author and publish an exciting test for the community!
+              Be the first creator to author and publish an exciting test for the
+              community!
             </p>
             {isAuthenticated && (
               <Button
@@ -205,13 +232,19 @@ export const DashboardPage: React.FC = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
             {recentTests.map((test) => (
-              <Card key={test.id} className="flex flex-col justify-between hover:shadow-md transition-shadow">
+              <Card
+                key={test.id}
+                className="flex flex-col justify-between hover:shadow-md transition-shadow"
+              >
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between gap-2 mb-1.5">
                     <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground truncate">
                       {test.category}
                     </span>
-                    <Badge variant={difficultyVariant(test.difficulty) as any} className="capitalize">
+                    <Badge
+                      variant={difficultyVariant(test.difficulty) as any}
+                      className="capitalize"
+                    >
                       {test.difficulty}
                     </Badge>
                   </div>
@@ -234,7 +267,12 @@ export const DashboardPage: React.FC = () => {
                     size="sm"
                     className="w-full gap-1.5 font-medium"
                     onClick={() =>
-                      dispatch(navigate({ view: isAuthenticated ? 'take-test' : 'login', param: test.id }))
+                      dispatch(
+                        navigate({
+                          view: isAuthenticated ? 'take-test' : 'login',
+                          param: test.id,
+                        }),
+                      )
                     }
                   >
                     Start Test
@@ -288,7 +326,9 @@ export const DashboardPage: React.FC = () => {
                   onClick={() => dispatch(navigate({ view: 'result', param: res.id }))}
                 >
                   <div className="space-y-1">
-                    <div className="font-semibold text-sm line-clamp-1">{res.test_title}</div>
+                    <div className="font-semibold text-sm line-clamp-1">
+                      {res.test_title}
+                    </div>
                     <div className="text-xs text-muted-foreground flex items-center gap-2">
                       <Clock className="h-3 w-3" />
                       {new Date(res.completed_at).toLocaleDateString()}

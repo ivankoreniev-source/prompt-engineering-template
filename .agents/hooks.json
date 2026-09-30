@@ -1,39 +1,73 @@
 {
-  "safety-guard": {
-    "enabled": true,
+  "backend-safety-guard": {
     "PreToolUse": [
       {
-        "matcher": "run_command",
+        "matcher": "run_command|write_to_file|replace_file_content",
         "hooks": [
           {
             "type": "command",
-            "command": "python .agents/scripts/pre_tool_guard.py",
-            "timeout": 10
+            "command": "python hooks/backend_safety_guard.py",
+            "timeout": 15
           }
         ]
       }
     ]
   },
-  "architecture-reminder": {
-    "enabled": true,
+  "backend-architecture-reminder": {
     "PreInvocation": [
       {
         "type": "command",
-        "command": "python .agents/scripts/pre_invocation_reminder.py",
+        "command": "python hooks/backend_architecture_reminder.py",
         "timeout": 10
       }
     ]
   },
-  "post-command-audit": {
-    "enabled": true,
+  "backend-post-tool-audit": {
     "PostToolUse": [
       {
-        "matcher": "run_command",
+        "matcher": "run_command|write_to_file|replace_file_content",
         "hooks": [
           {
             "type": "command",
-            "command": "python .agents/scripts/post_tool_audit.py",
-            "timeout": 10
+            "command": "python hooks/backend_post_tool_audit.py",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  },
+  "frontend-safety-guard": {
+    "PreToolUse": [
+      {
+        "matcher": "run_command|write_to_file|replace_file_content",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python hooks/frontend_safety_guard.py",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  },
+  "frontend-architecture-reminder": {
+    "PreInvocation": [
+      {
+        "type": "command",
+        "command": "python hooks/frontend_architecture_reminder.py",
+        "timeout": 10
+      }
+    ]
+  },
+  "frontend-post-tool-audit": {
+    "PostToolUse": [
+      {
+        "matcher": "run_command|write_to_file|replace_file_content",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python hooks/frontend_post_tool_audit.py",
+            "timeout": 15
           }
         ]
       }

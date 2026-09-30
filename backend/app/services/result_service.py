@@ -58,17 +58,16 @@ class ResultService:
             user_selected = user_answers_map.get(q.id, [])
             is_correct = False
 
-            if q.question_type in (QuestionType.SINGLE_CHOICE, QuestionType.TRUE_FALSE):
-                # Must select exactly 1 and it must be the correct answer
-                if len(user_selected) == 1 and user_selected[0] in q.correct_answers:
-                    is_correct = True
-            elif q.question_type == QuestionType.MULTIPLE_CHOICE:
-                # Must match the exact set of correct answers
-                if (
-                    len(user_selected) > 0
-                    and set(user_selected) == set(q.correct_answers)
-                ):
-                    is_correct = True
+            if (
+                q.question_type in (QuestionType.SINGLE_CHOICE, QuestionType.TRUE_FALSE)
+                and len(user_selected) == 1
+                and user_selected[0] in q.correct_answers
+            ) or (
+                q.question_type == QuestionType.MULTIPLE_CHOICE
+                and len(user_selected) > 0
+                and set(user_selected) == set(q.correct_answers)
+            ):
+                is_correct = True
 
             if is_correct:
                 score += 1
@@ -87,9 +86,7 @@ class ResultService:
             )
 
         total_questions = len(test.questions)
-        percentage = (
-            round((score / total_questions) * 100, 1) if total_questions > 0 else 0.0
-        )
+        percentage = round((score / total_questions) * 100, 1) if total_questions > 0 else 0.0
         passed = percentage >= 60.0
 
         result = ResultInDb(
@@ -130,4 +127,3 @@ class ResultService:
                 detail="You do not have permission to view this test result",
             )
         return ResultDetailResponse.from_db(result)
-

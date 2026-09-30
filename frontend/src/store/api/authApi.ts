@@ -55,4 +55,3 @@ export const {
   useLazyGetMeQuery,
   useUpdateProfileMutation,
 } = authApi
-

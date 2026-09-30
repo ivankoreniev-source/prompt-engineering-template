@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import type { AppDispatch, RootState } from '@/store/store'
 import { navigate } from '@/store/slices/navigationSlice'
@@ -15,7 +15,13 @@ import type {
   QuestionInput,
   QuestionType,
 } from '@/types/test'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -59,51 +65,56 @@ const createDefaultQuestion = (type: QuestionType = 'single_choice'): QuestionIn
   }
 }
 
-export const TestEditorPage: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>()
-  const editingTestId = useSelector(
-    (state: RootState) => state.navigation.param,
-  )
-  const isEditing = !!editingTestId
+interface TestEditorFormProps {
+  initialTest?: {
+    id: string
+    title: string
+    description?: string
+    category: string
+    difficulty: DifficultyLevel
+    questions: {
+      id: string
+      question_text: string
+      question_type: QuestionType
+      options: { id: string; text: string }[]
+      correct_answers: string[]
+      explanation?: string
+    }[]
+  }
+  editingTestId?: string | null
+}
 
-  const { data: existingTest, isLoading: loadingExisting } =
-    useGetTestForCreatorQuery(editingTestId || '', {
-      skip: !isEditing,
-    })
+const TestEditorForm: React.FC<TestEditorFormProps> = ({
+  initialTest,
+  editingTestId,
+}) => {
+  const dispatch = useDispatch<AppDispatch>()
+  const isEditing = !!editingTestId
 
   const [createTest, { isLoading: isCreating }] = useCreateTestMutation()
   const [updateTest, { isLoading: isUpdating }] = useUpdateTestMutation()
   const [publishTest, { isLoading: isPublishing }] = usePublishTestMutation()
 
-  // Form State
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [category, setCategory] = useState('General')
-  const [difficulty, setDifficulty] = useState<DifficultyLevel>('medium')
-  const [questions, setQuestions] = useState<QuestionInput[]>(() =>
-    isEditing ? [] : [createDefaultQuestion()],
+  // Form State initialized directly from props
+  const [title, setTitle] = useState(initialTest?.title || '')
+  const [description, setDescription] = useState(initialTest?.description || '')
+  const [category, setCategory] = useState(initialTest?.category || 'General')
+  const [difficulty, setDifficulty] = useState<DifficultyLevel>(
+    initialTest?.difficulty || 'medium',
   )
-  const [validationError, setValidationError] = useState<string | null>(null)
-
-  // Initialize form when editing
-  useEffect(() => {
-    if (existingTest) {
-      setTitle(existingTest.title)
-      setDescription(existingTest.description || '')
-      setCategory(existingTest.category)
-      setDifficulty(existingTest.difficulty)
-      setQuestions(
-        existingTest.questions.map((q) => ({
+  const [questions, setQuestions] = useState<QuestionInput[]>(() =>
+    initialTest
+      ? initialTest.questions.map((q) => ({
           id: q.id,
           question_text: q.question_text,
           question_type: q.question_type,
           options: q.options.map((opt) => ({ id: opt.id, text: opt.text })),
           correct_answers: [...q.correct_answers],
           explanation: q.explanation || '',
-        })),
-      )
-    }
-  }, [existingTest])
+        }))
+      : [createDefaultQuestion()],
+  )
+  const [validationError, setValidationError] = useState<string | null>(null)
 
   const handleAddQuestion = (type: QuestionType = 'single_choice') => {
     const qId = 'temp_q_' + Date.now().toString() + Math.random().toString(36).slice(2, 5)
@@ -195,7 +206,9 @@ export const TestEditorPage: React.FC = () => {
       const copy = [...prev]
       const q = copy[qIndex]
       if (q.options.length <= 2) {
-        dispatch(addToast({ type: 'error', text: 'Each question must have at least 2 options' }))
+        dispatch(
+          addToast({ type: 'error', text: 'Each question must have at least 2 options' }),
+        )
         return prev
       }
       copy[qIndex] = {
@@ -321,14 +334,6 @@ export const TestEditorPage: React.FC = () => {
       const message = err?.data?.detail || 'Failed to save test'
       setValidationError(message)
     }
-  }
-
-  if (isEditing && loadingExisting) {
-    return (
-      <div className="mx-auto max-w-4xl py-12 px-4">
-        <div className="h-64 rounded-xl border border-border bg-muted/30 animate-pulse" />
-      </div>
-    )
   }
 
   return (
@@ -683,5 +688,33 @@ export const TestEditorPage: React.FC = () => {
         </Button>
       </div>
     </div>
+  )
+}
+
+export const TestEditorPage: React.FC = () => {
+  const editingTestId = useSelector((state: RootState) => state.navigation.param)
+  const isEditing = !!editingTestId
+
+  const { data: existingTest, isLoading: loadingExisting } = useGetTestForCreatorQuery(
+    editingTestId || '',
+    {
+      skip: !isEditing,
+    },
+  )
+
+  if (isEditing && loadingExisting) {
+    return (
+      <div className="mx-auto max-w-4xl py-12 px-4 space-y-4">
+        <div className="h-64 rounded-xl border border-border bg-muted/30 animate-pulse" />
+      </div>
+    )
+  }
+
+  return (
+    <TestEditorForm
+      key={existingTest?.id || 'new'}
+      initialTest={existingTest}
+      editingTestId={editingTestId}
+    />
   )
 }

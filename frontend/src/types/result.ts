@@ -46,4 +46,3 @@ export interface ResultDetail {
   breakdown: QuestionResult[]
   completed_at: string
 }
-

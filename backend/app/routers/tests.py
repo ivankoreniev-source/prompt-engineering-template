@@ -128,4 +128,3 @@ def delete_test(
     service: TestService = Depends(get_test_service),
 ) -> None:
     service.delete_test(test_id, current_user)
-

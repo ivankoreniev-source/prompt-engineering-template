@@ -32,4 +32,3 @@ class SessionRepository:
         sessions = self.list_all()
         filtered = [s for s in sessions if s.user_id != user_id]
         write_list_file(self._file_path, filtered)
-

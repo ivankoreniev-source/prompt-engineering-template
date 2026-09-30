@@ -34,4 +34,3 @@ const uiSlice = createSlice({
 export const { addToast, removeToast } = uiSlice.actions
 
 export default uiSlice.reducer
-

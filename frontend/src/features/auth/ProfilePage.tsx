@@ -1,14 +1,14 @@
-import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import type { AppDispatch, RootState } from '@/store/store'
-import { logout, setUser } from '@/store/slices/authSlice'
-import { navigate } from '@/store/slices/navigationSlice'
-import { addToast } from '@/store/slices/uiSlice'
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "@/store/store";
+import { logout, setUser } from "@/store/slices/authSlice";
+import { navigate } from "@/store/slices/navigationSlice";
+import { addToast } from "@/store/slices/uiSlice";
 import {
   useGetMeQuery,
   useUpdateProfileMutation,
   useLogoutMutation,
-} from '@/store/api/authApi'
+} from "@/store/api/authApi";
 import {
   Card,
   CardContent,
@@ -16,11 +16,11 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   AlertCircle,
   Calendar,
@@ -29,48 +29,51 @@ import {
   LogOut,
   Mail,
   User,
-} from 'lucide-react'
+} from "lucide-react";
 
 interface ProfileEditFormProps {
   user: {
-    id: string
-    username: string
-    email: string
-    bio?: string
-    created_at: string
-  }
-  onRefetch: () => void
+    id: string;
+    username: string;
+    email: string;
+    bio?: string;
+    created_at: string;
+  };
+  onRefetch: () => void;
 }
 
-const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ user, onRefetch }) => {
-  const dispatch = useDispatch<AppDispatch>()
-  const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation()
+const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
+  user,
+  onRefetch,
+}) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation();
 
-  const [email, setEmail] = useState(user.email || '')
-  const [bio, setBio] = useState(user.bio || '')
-  const [currentPassword, setCurrentPassword] = useState('')
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
+  const [email, setEmail] = useState(user.email || "");
+  const [bio, setBio] = useState(user.bio || "");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
-    setSuccess(null)
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
 
     if (newPassword) {
       if (!currentPassword) {
-        setError('Current password is required to set a new password')
-        return
+        setError("Current password is required to set a new password");
+        return;
       }
       if (newPassword.length < 6) {
-        setError('New password must be at least 6 characters')
-        return
+        setError("New password must be at least 6 characters");
+        return;
       }
       if (newPassword !== confirmPassword) {
-        setError('New passwords do not match')
-        return
+        setError("New passwords do not match");
+        return;
       }
     }
 
@@ -80,20 +83,20 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ user, onRefetch }) =>
         bio: bio.trim(),
         current_password: currentPassword || undefined,
         new_password: newPassword || undefined,
-      }).unwrap()
+      }).unwrap();
 
-      dispatch(setUser(updated))
-      setSuccess('Profile updated successfully!')
-      dispatch(addToast({ type: 'success', text: 'Profile updated!' }))
-      setCurrentPassword('')
-      setNewPassword('')
-      setConfirmPassword('')
-      onRefetch()
+      dispatch(setUser(updated));
+      setSuccess("Profile updated successfully!");
+      dispatch(addToast({ type: "success", text: "Profile updated!" }));
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      onRefetch();
     } catch (err: any) {
-      const message = err?.data?.detail || 'Failed to update profile'
-      setError(message)
+      const message = err?.data?.detail || "Failed to update profile";
+      setError(message);
     }
-  }
+  };
 
   return (
     <Card className="shadow-xs">
@@ -184,38 +187,40 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ user, onRefetch }) =>
         </CardContent>
         <CardFooter className="flex justify-end gap-3">
           <Button type="submit" disabled={isUpdating} className="font-semibold">
-            {isUpdating ? 'Saving...' : 'Save Changes'}
+            {isUpdating ? "Saving..." : "Save Changes"}
           </Button>
         </CardFooter>
       </form>
     </Card>
-  )
-}
+  );
+};
 
 export const ProfilePage: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>()
-  const { user: currentUser } = useSelector((state: RootState) => state.auth)
-  const { data: freshUser, refetch } = useGetMeQuery()
-  const [logoutTrigger] = useLogoutMutation()
+  const dispatch = useDispatch<AppDispatch>();
+  const { user: currentUser } = useSelector((state: RootState) => state.auth);
+  const { data: freshUser, refetch } = useGetMeQuery();
+  const [logoutTrigger] = useLogoutMutation();
 
-  const user = freshUser || currentUser
+  const user = freshUser || currentUser;
 
   const handleLogout = async () => {
     try {
-      await logoutTrigger().unwrap()
+      await logoutTrigger().unwrap();
     } catch {
       // ignore
     }
-    dispatch(logout())
-    dispatch(navigate({ view: 'dashboard' }))
-  }
+    dispatch(logout());
+    dispatch(navigate({ view: "dashboard" }));
+  };
 
   if (!user) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <p className="text-muted-foreground">Please log in to view your profile.</p>
+        <p className="text-muted-foreground">
+          Please log in to view your profile.
+        </p>
       </div>
-    )
+    );
   }
 
   return (
@@ -229,7 +234,9 @@ export const ProfilePage: React.FC = () => {
                 <User className="h-6 w-6" />
               </div>
               <div>
-                <CardTitle className="text-xl font-bold">{user.username}</CardTitle>
+                <CardTitle className="text-xl font-bold">
+                  {user.username}
+                </CardTitle>
                 <CardDescription className="flex items-center gap-1.5 mt-0.5">
                   <Mail className="h-3.5 w-3.5" />
                   {user.email}
@@ -258,5 +265,5 @@ export const ProfilePage: React.FC = () => {
       {/* Edit Profile & Password Form */}
       <ProfileEditForm key={user.id} user={user} onRefetch={refetch} />
     </div>
-  )
-}
+  );
+};

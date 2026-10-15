@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import {
   Dialog,
   DialogContent,
@@ -6,28 +6,28 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 interface ConfirmDialogProps {
-  open: boolean
-  title: string
-  description: string
-  confirmText?: string
-  cancelText?: string
-  variant?: 'destructive' | 'default'
-  onConfirm: () => void
-  onCancel: () => void
-  loading?: boolean
+  open: boolean;
+  title: string;
+  description: string;
+  confirmText?: string;
+  cancelText?: string;
+  variant?: "destructive" | "default";
+  onConfirm: () => void;
+  onCancel: () => void;
+  loading?: boolean;
 }
 
 export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   open,
   title,
   description,
-  confirmText = 'Confirm',
-  cancelText = 'Cancel',
-  variant = 'default',
+  confirmText = "Confirm",
+  cancelText = "Cancel",
+  variant = "default",
   onConfirm,
   onCancel,
   loading = false,
@@ -40,14 +40,24 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
           <DialogDescription className="mt-2">{description}</DialogDescription>
         </DialogHeader>
         <DialogFooter className="mt-4 gap-2 sm:gap-0">
-          <Button type="button" variant="outline" onClick={onCancel} disabled={loading}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            disabled={loading}
+          >
             {cancelText}
           </Button>
-          <Button type="button" variant={variant} onClick={onConfirm} disabled={loading}>
-            {loading ? 'Processing...' : confirmText}
+          <Button
+            type="button"
+            variant={variant}
+            onClick={onConfirm}
+            disabled={loading}
+          >
+            {loading ? "Processing..." : confirmText}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};

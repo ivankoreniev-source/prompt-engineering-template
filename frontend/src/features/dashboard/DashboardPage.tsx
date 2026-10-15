@@ -1,9 +1,9 @@
-import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import type { AppDispatch, RootState } from '@/store/store'
-import { navigate } from '@/store/slices/navigationSlice'
-import { useGetPublishedTestsQuery } from '@/store/api/testsApi'
-import { useGetMyResultsQuery } from '@/store/api/resultsApi'
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "@/store/store";
+import { navigate } from "@/store/slices/navigationSlice";
+import { useGetPublishedTestsQuery } from "@/store/api/testsApi";
+import { useGetMyResultsQuery } from "@/store/api/resultsApi";
 import {
   Card,
   CardContent,
@@ -11,9 +11,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   ArrowRight,
   BookOpen,
@@ -26,30 +26,36 @@ import {
   PlusCircle,
   Sparkles,
   TrendingUp,
-} from 'lucide-react'
+} from "lucide-react";
 
 export const DashboardPage: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>()
-  const { user, isAuthenticated } = useSelector((state: RootState) => state.auth)
+  const dispatch = useDispatch<AppDispatch>();
+  const { user, isAuthenticated } = useSelector(
+    (state: RootState) => state.auth
+  );
 
-  const { data: publishedTests, isLoading: testsLoading } = useGetPublishedTestsQuery()
-  const { data: myResults, isLoading: resultsLoading } = useGetMyResultsQuery(undefined, {
-    skip: !isAuthenticated,
-  })
+  const { data: publishedTests, isLoading: testsLoading } =
+    useGetPublishedTestsQuery();
+  const { data: myResults, isLoading: resultsLoading } = useGetMyResultsQuery(
+    undefined,
+    {
+      skip: !isAuthenticated,
+    }
+  );
 
-  const recentTests = (publishedTests || []).slice(0, 4)
-  const recentResults = (myResults || []).slice(0, 3)
+  const recentTests = (publishedTests || []).slice(0, 4);
+  const recentResults = (myResults || []).slice(0, 3);
 
   const difficultyVariant = (diff: string) => {
     switch (diff) {
-      case 'easy':
-        return 'success'
-      case 'hard':
-        return 'destructive'
+      case "easy":
+        return "success";
+      case "hard":
+        return "destructive";
       default:
-        return 'warning'
+        return "warning";
     }
-  }
+  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-10">
@@ -63,16 +69,17 @@ export const DashboardPage: React.FC = () => {
           <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
             {isAuthenticated
               ? `Welcome back, ${user?.username}!`
-              : 'Create, Share, and Master Tests with QuizCraft'}
+              : "Create, Share, and Master Tests with QuizCraft"}
           </h1>
           <p className="text-white/80 text-base leading-relaxed">
-            Build customized quizzes with single choice, multiple choice, and true/false
-            questions, or challenge yourself with tests created by the community.
+            Build customized quizzes with single choice, multiple choice, and
+            true/false questions, or challenge yourself with tests created by
+            the community.
           </p>
           <div className="pt-2 flex flex-wrap items-center gap-3">
             <Button
               size="lg"
-              onClick={() => dispatch(navigate({ view: 'tests' }))}
+              onClick={() => dispatch(navigate({ view: "tests" }))}
               className="bg-white text-primary hover:bg-white/90 font-bold shadow-md gap-2"
             >
               <Compass className="h-4 w-4" />
@@ -82,7 +89,7 @@ export const DashboardPage: React.FC = () => {
               <Button
                 size="lg"
                 variant="outline"
-                onClick={() => dispatch(navigate({ view: 'create-test' }))}
+                onClick={() => dispatch(navigate({ view: "create-test" }))}
                 className="bg-white/10 hover:bg-white/20 border-white/30 text-white font-semibold gap-2"
               >
                 <PlusCircle className="h-4 w-4" />
@@ -92,7 +99,7 @@ export const DashboardPage: React.FC = () => {
               <Button
                 size="lg"
                 variant="outline"
-                onClick={() => dispatch(navigate({ view: 'register' }))}
+                onClick={() => dispatch(navigate({ view: "register" }))}
                 className="bg-white/10 hover:bg-white/20 border-white/30 text-white font-semibold gap-2"
               >
                 Join Now Free
@@ -111,17 +118,20 @@ export const DashboardPage: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card
           className="hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-primary"
-          onClick={() => dispatch(navigate({ view: 'tests' }))}
+          onClick={() => dispatch(navigate({ view: "tests" }))}
         >
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-base font-semibold">Browse Tests</CardTitle>
+            <CardTitle className="text-base font-semibold">
+              Browse Tests
+            </CardTitle>
             <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
               <BookOpen className="h-4 w-4" />
             </div>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              Discover tests in science, programming, history, and general trivia.
+              Discover tests in science, programming, history, and general
+              trivia.
             </p>
           </CardContent>
           <CardFooter className="text-xs text-primary font-medium flex items-center gap-1">
@@ -132,19 +142,23 @@ export const DashboardPage: React.FC = () => {
         <Card
           className="hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-indigo-500"
           onClick={() =>
-            dispatch(navigate({ view: isAuthenticated ? 'create-test' : 'login' }))
+            dispatch(
+              navigate({ view: isAuthenticated ? "create-test" : "login" })
+            )
           }
         >
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-base font-semibold">Author a Test</CardTitle>
+            <CardTitle className="text-base font-semibold">
+              Author a Test
+            </CardTitle>
             <div className="h-8 w-8 rounded-lg bg-indigo-500/10 text-indigo-600 flex items-center justify-center">
               <PlusCircle className="h-4 w-4" />
             </div>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              Design questions with automatic grading, custom options, and detailed answer
-              explanations.
+              Design questions with automatic grading, custom options, and
+              detailed answer explanations.
             </p>
           </CardContent>
           <CardFooter className="text-xs text-indigo-600 font-medium flex items-center gap-1">
@@ -155,19 +169,23 @@ export const DashboardPage: React.FC = () => {
         <Card
           className="hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-emerald-500"
           onClick={() =>
-            dispatch(navigate({ view: isAuthenticated ? 'my-results' : 'login' }))
+            dispatch(
+              navigate({ view: isAuthenticated ? "my-results" : "login" })
+            )
           }
         >
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-base font-semibold">Track Progress</CardTitle>
+            <CardTitle className="text-base font-semibold">
+              Track Progress
+            </CardTitle>
             <div className="h-8 w-8 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
               <TrendingUp className="h-4 w-4" />
             </div>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              Inspect test attempts, review correct answers, and monitor knowledge
-              improvements.
+              Inspect test attempts, review correct answers, and monitor
+              knowledge improvements.
             </p>
           </CardContent>
           <CardFooter className="text-xs text-emerald-600 font-medium flex items-center gap-1">
@@ -191,7 +209,7 @@ export const DashboardPage: React.FC = () => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => dispatch(navigate({ view: 'tests' }))}
+            onClick={() => dispatch(navigate({ view: "tests" }))}
             className="text-primary gap-1 font-medium"
           >
             View all ({publishedTests?.length || 0})
@@ -215,13 +233,13 @@ export const DashboardPage: React.FC = () => {
             </div>
             <h3 className="text-base font-semibold">No published tests yet</h3>
             <p className="text-sm text-muted-foreground mt-1 max-w-sm mx-auto">
-              Be the first creator to author and publish an exciting test for the
-              community!
+              Be the first creator to author and publish an exciting test for
+              the community!
             </p>
             {isAuthenticated && (
               <Button
                 size="sm"
-                onClick={() => dispatch(navigate({ view: 'create-test' }))}
+                onClick={() => dispatch(navigate({ view: "create-test" }))}
                 className="mt-4 gap-1.5"
               >
                 <PlusCircle className="h-4 w-4" />
@@ -252,7 +270,7 @@ export const DashboardPage: React.FC = () => {
                     {test.title}
                   </CardTitle>
                   <CardDescription className="line-clamp-2 text-xs">
-                    {test.description || 'No description provided.'}
+                    {test.description || "No description provided."}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="py-0 text-xs text-muted-foreground space-y-1">
@@ -269,9 +287,9 @@ export const DashboardPage: React.FC = () => {
                     onClick={() =>
                       dispatch(
                         navigate({
-                          view: isAuthenticated ? 'take-test' : 'login',
+                          view: isAuthenticated ? "take-test" : "login",
                           param: test.id,
-                        }),
+                        })
                       )
                     }
                   >
@@ -301,7 +319,7 @@ export const DashboardPage: React.FC = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => dispatch(navigate({ view: 'my-results' }))}
+              onClick={() => dispatch(navigate({ view: "my-results" }))}
               className="text-primary gap-1 font-medium"
             >
               All Results
@@ -323,7 +341,9 @@ export const DashboardPage: React.FC = () => {
                 <Card
                   key={res.id}
                   className="p-4 hover:shadow-xs transition-shadow cursor-pointer flex items-center justify-between"
-                  onClick={() => dispatch(navigate({ view: 'result', param: res.id }))}
+                  onClick={() =>
+                    dispatch(navigate({ view: "result", param: res.id }))
+                  }
                 >
                   <div className="space-y-1">
                     <div className="font-semibold text-sm line-clamp-1">
@@ -343,8 +363,8 @@ export const DashboardPage: React.FC = () => {
                         {res.percentage}%
                       </div>
                     </div>
-                    <Badge variant={res.passed ? 'success' : 'destructive'}>
-                      {res.passed ? 'Passed' : 'Failed'}
+                    <Badge variant={res.passed ? "success" : "destructive"}>
+                      {res.passed ? "Passed" : "Failed"}
                     </Badge>
                   </div>
                 </Card>
@@ -354,5 +374,5 @@ export const DashboardPage: React.FC = () => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};

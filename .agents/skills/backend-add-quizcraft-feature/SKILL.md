@@ -3,6 +3,9 @@ name: backend-add-quizcraft-feature
 description: >-
   Use this skill exclusively when implementing or modifying backend features,
   data models, repositories, business services, or API routers in `backend/`. Do not use for frontend tasks.
+pathFilters: ["backend/**"]
+PathFilters: ["backend/**"]
+globs: ["backend/**"]
 ---
 
 # Adding a Backend Feature to QuizCraft

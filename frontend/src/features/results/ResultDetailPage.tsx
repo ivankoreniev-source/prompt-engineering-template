@@ -1,8 +1,8 @@
-import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import type { AppDispatch, RootState } from '@/store/store'
-import { navigate } from '@/store/slices/navigationSlice'
-import { useGetResultByIdQuery } from '@/store/api/resultsApi'
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "@/store/store";
+import { navigate } from "@/store/slices/navigationSlice";
+import { useGetResultByIdQuery } from "@/store/api/resultsApi";
 import {
   Card,
   CardContent,
@@ -10,9 +10,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   AlertCircle,
   ArrowLeft,
@@ -24,26 +24,26 @@ import {
   HelpCircle,
   RotateCcw,
   XCircle,
-} from 'lucide-react'
+} from "lucide-react";
 
 export const ResultDetailPage: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>()
-  const resultId = useSelector((state: RootState) => state.navigation.param)
+  const dispatch = useDispatch<AppDispatch>();
+  const resultId = useSelector((state: RootState) => state.navigation.param);
 
   const {
     data: result,
     isLoading,
     error,
-  } = useGetResultByIdQuery(resultId || '', {
+  } = useGetResultByIdQuery(resultId || "", {
     skip: !resultId,
-  })
+  });
 
   if (isLoading) {
     return (
       <div className="mx-auto max-w-3xl py-12 px-4 space-y-4">
         <div className="h-64 rounded-xl border border-border bg-muted/30 animate-pulse" />
       </div>
-    )
+    );
   }
 
   if (error || !result) {
@@ -53,22 +53,23 @@ export const ResultDetailPage: React.FC = () => {
           <AlertCircle className="mx-auto h-12 w-12 text-destructive" />
           <h2 className="text-xl font-bold mt-4">Result Not Found</h2>
           <p className="text-sm text-muted-foreground mt-2">
-            The requested test result could not be located or you don't have access to it.
+            The requested test result could not be located or you don't have
+            access to it.
           </p>
           <Button
-            onClick={() => dispatch(navigate({ view: 'my-results' }))}
+            onClick={() => dispatch(navigate({ view: "my-results" }))}
             className="mt-6"
           >
             Go to My Results
           </Button>
         </Card>
       </div>
-    )
+    );
   }
 
-  const correctCount = result.score
-  const totalCount = result.total_questions
-  const incorrectCount = totalCount - correctCount
+  const correctCount = result.score;
+  const totalCount = result.total_questions;
+  const incorrectCount = totalCount - correctCount;
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 space-y-8">
@@ -77,7 +78,7 @@ export const ResultDetailPage: React.FC = () => {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => dispatch(navigate({ view: 'my-results' }))}
+          onClick={() => dispatch(navigate({ view: "my-results" }))}
           className="gap-1.5"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -94,8 +95,8 @@ export const ResultDetailPage: React.FC = () => {
       <Card
         className={`border-2 shadow-md ${
           result.passed
-            ? 'border-emerald-500/50 bg-gradient-to-b from-emerald-500/5 to-background'
-            : 'border-rose-500/50 bg-gradient-to-b from-rose-500/5 to-background'
+            ? "border-emerald-500/50 bg-gradient-to-b from-emerald-500/5 to-background"
+            : "border-rose-500/50 bg-gradient-to-b from-rose-500/5 to-background"
         }`}
       >
         <CardHeader className="text-center pb-2">
@@ -107,15 +108,17 @@ export const ResultDetailPage: React.FC = () => {
             )}
           </div>
           <Badge
-            variant={result.passed ? 'success' : 'destructive'}
+            variant={result.passed ? "success" : "destructive"}
             className="mx-auto text-sm px-3 py-1 font-bold"
           >
-            {result.passed ? 'PASSED' : 'NEEDS IMPROVEMENT'}
+            {result.passed ? "PASSED" : "NEEDS IMPROVEMENT"}
           </Badge>
           <CardTitle className="text-2xl font-extrabold mt-3">
             {result.test_title}
           </CardTitle>
-          <CardDescription>Performance breakdown and answer evaluation</CardDescription>
+          <CardDescription>
+            Performance breakdown and answer evaluation
+          </CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-6 pt-4">
@@ -154,14 +157,17 @@ export const ResultDetailPage: React.FC = () => {
           <Button
             variant="outline"
             onClick={() =>
-              dispatch(navigate({ view: 'take-test', param: result.test_id }))
+              dispatch(navigate({ view: "take-test", param: result.test_id }))
             }
             className="gap-2"
           >
             <RotateCcw className="h-4 w-4" />
             Retake Test
           </Button>
-          <Button onClick={() => dispatch(navigate({ view: 'tests' }))} className="gap-2">
+          <Button
+            onClick={() => dispatch(navigate({ view: "tests" }))}
+            className="gap-2"
+          >
             <Compass className="h-4 w-4" />
             Explore More Tests
           </Button>
@@ -177,26 +183,26 @@ export const ResultDetailPage: React.FC = () => {
 
         <div className="space-y-4">
           {result.breakdown.map((q, idx) => {
-            const userChoiceSet = new Set(q.user_answers)
-            const correctChoiceSet = new Set(q.correct_answers)
+            const userChoiceSet = new Set(q.user_answers);
+            const correctChoiceSet = new Set(q.correct_answers);
 
             return (
               <Card
                 key={q.question_id || idx}
                 className={`border-l-4 shadow-xs ${
-                  q.is_correct ? 'border-l-emerald-600' : 'border-l-rose-600'
+                  q.is_correct ? "border-l-emerald-600" : "border-l-rose-600"
                 }`}
               >
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between gap-2">
                     <Badge
-                      variant={q.is_correct ? 'success' : 'destructive'}
+                      variant={q.is_correct ? "success" : "destructive"}
                       className="text-xs"
                     >
-                      {q.is_correct ? 'Correct' : 'Incorrect'}
+                      {q.is_correct ? "Correct" : "Incorrect"}
                     </Badge>
                     <span className="text-xs text-muted-foreground capitalize font-medium">
-                      {q.question_type.replace('_', ' ')}
+                      {q.question_type.replace("_", " ")}
                     </span>
                   </div>
                   <CardTitle className="text-base font-semibold mt-2">
@@ -208,17 +214,17 @@ export const ResultDetailPage: React.FC = () => {
                   {/* Options List */}
                   <div className="space-y-1.5 pt-1">
                     {q.options.map((opt) => {
-                      const isUserChoice = userChoiceSet.has(opt.id)
-                      const isTargetCorrect = correctChoiceSet.has(opt.id)
+                      const isUserChoice = userChoiceSet.has(opt.id);
+                      const isTargetCorrect = correctChoiceSet.has(opt.id);
 
                       let optionStyle =
-                        'border-border bg-background text-muted-foreground'
+                        "border-border bg-background text-muted-foreground";
                       if (isTargetCorrect) {
                         optionStyle =
-                          'border-emerald-500 bg-emerald-500/10 text-emerald-950 dark:text-emerald-100 font-medium'
+                          "border-emerald-500 bg-emerald-500/10 text-emerald-950 dark:text-emerald-100 font-medium";
                       } else if (isUserChoice && !isTargetCorrect) {
                         optionStyle =
-                          'border-rose-500 bg-rose-500/10 text-rose-950 dark:text-rose-100 line-through'
+                          "border-rose-500 bg-rose-500/10 text-rose-950 dark:text-rose-100 line-through";
                       }
 
                       return (
@@ -249,7 +255,7 @@ export const ResultDetailPage: React.FC = () => {
                             )}
                           </div>
                         </div>
-                      )
+                      );
                     })}
                   </div>
 
@@ -267,10 +273,10 @@ export const ResultDetailPage: React.FC = () => {
                   )}
                 </CardContent>
               </Card>
-            )
+            );
           })}
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

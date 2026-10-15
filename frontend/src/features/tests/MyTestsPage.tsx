@@ -1,18 +1,18 @@
-import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
-import type { AppDispatch } from '@/store/store'
-import { navigate } from '@/store/slices/navigationSlice'
-import { addToast } from '@/store/slices/uiSlice'
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "@/store/store";
+import { navigate } from "@/store/slices/navigationSlice";
+import { addToast } from "@/store/slices/uiSlice";
 import {
   useDeleteTestMutation,
   useGetMyTestsQuery,
   usePublishTestMutation,
   useUnpublishTestMutation,
-} from '@/store/api/testsApi'
-import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { ConfirmDialog } from '@/components/common/ConfirmDialog'
+} from "@/store/api/testsApi";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import {
   CheckCircle,
   Clock,
@@ -23,47 +23,59 @@ import {
   Send,
   Trash2,
   XCircle,
-} from 'lucide-react'
+} from "lucide-react";
 
 export const MyTestsPage: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>()
-  const { data: myTests, isLoading, refetch } = useGetMyTestsQuery()
-  const [publishTest, { isLoading: isPublishing }] = usePublishTestMutation()
-  const [unpublishTest, { isLoading: isUnpublishing }] = useUnpublishTestMutation()
-  const [deleteTest, { isLoading: isDeleting }] = useDeleteTestMutation()
+  const dispatch = useDispatch<AppDispatch>();
+  const { data: myTests, isLoading, refetch } = useGetMyTestsQuery();
+  const [publishTest, { isLoading: isPublishing }] = usePublishTestMutation();
+  const [unpublishTest, { isLoading: isUnpublishing }] =
+    useUnpublishTestMutation();
+  const [deleteTest, { isLoading: isDeleting }] = useDeleteTestMutation();
 
-  const [testToDelete, setTestToDelete] = useState<{ id: string; title: string } | null>(
-    null,
-  )
+  const [testToDelete, setTestToDelete] = useState<{
+    id: string;
+    title: string;
+  } | null>(null);
 
-  const handleTogglePublish = async (testId: string, currentlyPublished: boolean) => {
+  const handleTogglePublish = async (
+    testId: string,
+    currentlyPublished: boolean
+  ) => {
     try {
       if (currentlyPublished) {
-        await unpublishTest(testId).unwrap()
-        dispatch(addToast({ type: 'info', text: 'Test unpublished (now Draft)' }))
+        await unpublishTest(testId).unwrap();
+        dispatch(
+          addToast({ type: "info", text: "Test unpublished (now Draft)" })
+        );
       } else {
-        await publishTest(testId).unwrap()
-        dispatch(addToast({ type: 'success', text: 'Test successfully published!' }))
+        await publishTest(testId).unwrap();
+        dispatch(
+          addToast({ type: "success", text: "Test successfully published!" })
+        );
       }
-      refetch()
+      refetch();
     } catch (err: any) {
-      const msg = err?.data?.detail || 'Failed to update test publication status'
-      dispatch(addToast({ type: 'error', text: msg }))
+      const msg =
+        err?.data?.detail || "Failed to update test publication status";
+      dispatch(addToast({ type: "error", text: msg }));
     }
-  }
+  };
 
   const handleDeleteConfirm = async () => {
-    if (!testToDelete) return
+    if (!testToDelete) return;
     try {
-      await deleteTest(testToDelete.id).unwrap()
-      dispatch(addToast({ type: 'success', text: `Deleted "${testToDelete.title}"` }))
-      setTestToDelete(null)
-      refetch()
+      await deleteTest(testToDelete.id).unwrap();
+      dispatch(
+        addToast({ type: "success", text: `Deleted "${testToDelete.title}"` })
+      );
+      setTestToDelete(null);
+      refetch();
     } catch (err: any) {
-      const msg = err?.data?.detail || 'Failed to delete test'
-      dispatch(addToast({ type: 'error', text: msg }))
+      const msg = err?.data?.detail || "Failed to delete test";
+      dispatch(addToast({ type: "error", text: msg }));
     }
-  }
+  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-8">
@@ -75,12 +87,12 @@ export const MyTestsPage: React.FC = () => {
             My Authored Tests
           </h1>
           <p className="text-muted-foreground mt-1 text-sm">
-            Manage your created tests, update questions, and publish to the public
-            catalog.
+            Manage your created tests, update questions, and publish to the
+            public catalog.
           </p>
         </div>
         <Button
-          onClick={() => dispatch(navigate({ view: 'create-test' }))}
+          onClick={() => dispatch(navigate({ view: "create-test" }))}
           className="self-start sm:self-auto gap-2 font-semibold shadow-xs"
         >
           <PlusCircle className="h-4 w-4" />
@@ -103,13 +115,15 @@ export const MyTestsPage: React.FC = () => {
           <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-muted text-muted-foreground">
             <FileQuestion className="h-7 w-7" />
           </div>
-          <h3 className="text-lg font-semibold">You haven't created any tests yet</h3>
+          <h3 className="text-lg font-semibold">
+            You haven't created any tests yet
+          </h3>
           <p className="text-sm text-muted-foreground mt-1 max-w-sm mx-auto">
-            Design questions with single or multiple answers and publish them for users to
-            take.
+            Design questions with single or multiple answers and publish them
+            for users to take.
           </p>
           <Button
-            onClick={() => dispatch(navigate({ view: 'create-test' }))}
+            onClick={() => dispatch(navigate({ view: "create-test" }))}
             className="mt-5 gap-2"
           >
             <PlusCircle className="h-4 w-4" />
@@ -126,7 +140,7 @@ export const MyTestsPage: React.FC = () => {
               <div className="space-y-2 flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge
-                    variant={test.is_published ? 'success' : 'secondary'}
+                    variant={test.is_published ? "success" : "secondary"}
                     className="gap-1"
                   >
                     {test.is_published ? (
@@ -152,17 +166,19 @@ export const MyTestsPage: React.FC = () => {
                     {test.title}
                   </h3>
                   <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
-                    {test.description || 'No description provided.'}
+                    {test.description || "No description provided."}
                   </p>
                 </div>
 
                 <div className="flex items-center gap-4 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1 font-medium">
                     <HelpCircle className="h-3.5 w-3.5" />
-                    {test.question_count}{' '}
-                    {test.question_count === 1 ? 'question' : 'questions'}
+                    {test.question_count}{" "}
+                    {test.question_count === 1 ? "question" : "questions"}
                   </span>
-                  <span>Updated on {new Date(test.updated_at).toLocaleDateString()}</span>
+                  <span>
+                    Updated on {new Date(test.updated_at).toLocaleDateString()}
+                  </span>
                 </div>
               </div>
 
@@ -172,7 +188,7 @@ export const MyTestsPage: React.FC = () => {
                   variant="outline"
                   size="sm"
                   onClick={() =>
-                    dispatch(navigate({ view: 'edit-test', param: test.id }))
+                    dispatch(navigate({ view: "edit-test", param: test.id }))
                   }
                   className="gap-1.5"
                 >
@@ -181,10 +197,12 @@ export const MyTestsPage: React.FC = () => {
                 </Button>
 
                 <Button
-                  variant={test.is_published ? 'secondary' : 'default'}
+                  variant={test.is_published ? "secondary" : "default"}
                   size="sm"
                   disabled={isPublishing || isUnpublishing}
-                  onClick={() => handleTogglePublish(test.id, test.is_published)}
+                  onClick={() =>
+                    handleTogglePublish(test.id, test.is_published)
+                  }
                   className="gap-1.5"
                 >
                   {test.is_published ? (
@@ -204,7 +222,9 @@ export const MyTestsPage: React.FC = () => {
                   variant="ghost"
                   size="sm"
                   disabled={isDeleting}
-                  onClick={() => setTestToDelete({ id: test.id, title: test.title })}
+                  onClick={() =>
+                    setTestToDelete({ id: test.id, title: test.title })
+                  }
                   className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                   title="Delete Test"
                 >
@@ -228,5 +248,5 @@ export const MyTestsPage: React.FC = () => {
         onCancel={() => setTestToDelete(null)}
       />
     </div>
-  )
-}
+  );
+};

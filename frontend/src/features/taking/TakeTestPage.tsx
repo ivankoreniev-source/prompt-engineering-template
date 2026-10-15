@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import type { AppDispatch, RootState } from '@/store/store'
-import { navigate } from '@/store/slices/navigationSlice'
-import { addToast } from '@/store/slices/uiSlice'
-import { useGetTestForTakingQuery } from '@/store/api/testsApi'
-import { useSubmitTestMutation } from '@/store/api/resultsApi'
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "@/store/store";
+import { navigate } from "@/store/slices/navigationSlice";
+import { addToast } from "@/store/slices/uiSlice";
+import { useGetTestForTakingQuery } from "@/store/api/testsApi";
+import { useSubmitTestMutation } from "@/store/api/resultsApi";
 import {
   Card,
   CardContent,
@@ -12,88 +12,105 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { ConfirmDialog } from '@/components/common/ConfirmDialog'
-import { AlertCircle, ArrowLeft, ArrowRight, Check, Layers, Send } from 'lucide-react'
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import {
+  AlertCircle,
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  Layers,
+  Send,
+} from "lucide-react";
 
 export const TakeTestPage: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>()
-  const testId = useSelector((state: RootState) => state.navigation.param)
+  const dispatch = useDispatch<AppDispatch>();
+  const testId = useSelector((state: RootState) => state.navigation.param);
 
   const {
     data: test,
     isLoading,
     error,
-  } = useGetTestForTakingQuery(testId || '', {
+  } = useGetTestForTakingQuery(testId || "", {
     skip: !testId,
-  })
+  });
 
-  const [submitTest, { isLoading: isSubmitting }] = useSubmitTestMutation()
+  const [submitTest, { isLoading: isSubmitting }] = useSubmitTestMutation();
 
   // State: active question index (0-based)
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
   // Map of question_id -> array of selected option IDs
-  const [answers, setAnswers] = useState<Record<string, string[]>>({})
+  const [answers, setAnswers] = useState<Record<string, string[]>>({});
 
   // Review mode and confirmation dialog
-  const [showReview, setShowReview] = useState(false)
-  const [showConfirmSubmit, setShowConfirmSubmit] = useState(false)
+  const [showReview, setShowReview] = useState(false);
+  const [showConfirmSubmit, setShowConfirmSubmit] = useState(false);
 
-  const questions = test?.questions || []
-  const currentQuestion = questions[currentQuestionIndex]
+  const questions = test?.questions || [];
+  const currentQuestion = questions[currentQuestionIndex];
 
-  const handleSelectOption = (questionId: string, optionId: string, isMulti: boolean) => {
+  const handleSelectOption = (
+    questionId: string,
+    optionId: string,
+    isMulti: boolean
+  ) => {
     setAnswers((prev) => {
-      const currentSelected = prev[questionId] || []
+      const currentSelected = prev[questionId] || [];
       if (isMulti) {
-        const exists = currentSelected.includes(optionId)
+        const exists = currentSelected.includes(optionId);
         const updated = exists
           ? currentSelected.filter((id) => id !== optionId)
-          : [...currentSelected, optionId]
-        return { ...prev, [questionId]: updated }
+          : [...currentSelected, optionId];
+        return { ...prev, [questionId]: updated };
       } else {
-        return { ...prev, [questionId]: [optionId] }
+        return { ...prev, [questionId]: [optionId] };
       }
-    })
-  }
+    });
+  };
 
-  const answeredCount = Object.values(answers).filter((arr) => arr.length > 0).length
-  const totalCount = questions.length
+  const answeredCount = Object.values(answers).filter(
+    (arr) => arr.length > 0
+  ).length;
+  const totalCount = questions.length;
   const progressPercent =
-    totalCount > 0 ? Math.round((answeredCount / totalCount) * 100) : 0
+    totalCount > 0 ? Math.round((answeredCount / totalCount) * 100) : 0;
 
   const handleFinalSubmit = async () => {
-    if (!testId) return
+    if (!testId) return;
 
     const payload = {
       testId,
       submission: {
-        answers: Object.entries(answers).map(([question_id, selected_option_ids]) => ({
-          question_id,
-          selected_option_ids,
-        })),
+        answers: Object.entries(answers).map(
+          ([question_id, selected_option_ids]) => ({
+            question_id,
+            selected_option_ids,
+          })
+        ),
       },
-    }
+    };
 
     try {
-      const result = await submitTest(payload).unwrap()
-      dispatch(addToast({ type: 'success', text: 'Test submitted successfully!' }))
-      dispatch(navigate({ view: 'result', param: result.id }))
+      const result = await submitTest(payload).unwrap();
+      dispatch(
+        addToast({ type: "success", text: "Test submitted successfully!" })
+      );
+      dispatch(navigate({ view: "result", param: result.id }));
     } catch (err: any) {
-      const msg = err?.data?.detail || 'Failed to submit test'
-      dispatch(addToast({ type: 'error', text: msg }))
+      const msg = err?.data?.detail || "Failed to submit test";
+      dispatch(addToast({ type: "error", text: msg }));
     }
-  }
+  };
 
   if (isLoading) {
     return (
       <div className="mx-auto max-w-3xl py-12 px-4 space-y-4">
         <div className="h-64 rounded-xl border border-border bg-muted/30 animate-pulse" />
       </div>
-    )
+    );
   }
 
   if (error || !test) {
@@ -105,12 +122,15 @@ export const TakeTestPage: React.FC = () => {
           <p className="text-sm text-muted-foreground mt-2">
             This test may not exist or has not been published yet.
           </p>
-          <Button onClick={() => dispatch(navigate({ view: 'tests' }))} className="mt-6">
+          <Button
+            onClick={() => dispatch(navigate({ view: "tests" }))}
+            className="mt-6"
+          >
             Back to Tests Catalog
           </Button>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -138,7 +158,7 @@ export const TakeTestPage: React.FC = () => {
           className="gap-1.5"
         >
           <Layers className="h-4 w-4" />
-          {showReview ? 'Back to Questions' : 'Review All'}
+          {showReview ? "Back to Questions" : "Review All"}
         </Button>
       </div>
 
@@ -146,7 +166,8 @@ export const TakeTestPage: React.FC = () => {
       <div className="space-y-2">
         <div className="flex items-center justify-between text-xs text-muted-foreground font-medium">
           <span>
-            Progress: {answeredCount} of {totalCount} answered ({progressPercent}%)
+            Progress: {answeredCount} of {totalCount} answered (
+            {progressPercent}%)
           </span>
           <span>
             Question {currentQuestionIndex + 1} of {totalCount}
@@ -162,29 +183,29 @@ export const TakeTestPage: React.FC = () => {
         {/* Quick jump question numbers */}
         <div className="flex flex-wrap items-center gap-1.5 pt-2">
           {questions.map((q, idx) => {
-            const isAnswered = (answers[q.id] || []).length > 0
-            const isCurrent = idx === currentQuestionIndex && !showReview
+            const isAnswered = (answers[q.id] || []).length > 0;
+            const isCurrent = idx === currentQuestionIndex && !showReview;
 
             return (
               <button
                 key={q.id}
                 type="button"
                 onClick={() => {
-                  setCurrentQuestionIndex(idx)
-                  setShowReview(false)
+                  setCurrentQuestionIndex(idx);
+                  setShowReview(false);
                 }}
                 className={`h-8 w-8 rounded-md text-xs font-semibold transition-all cursor-pointer flex items-center justify-center ${
                   isCurrent
-                    ? 'ring-2 ring-primary ring-offset-2 bg-primary text-primary-foreground'
+                    ? "ring-2 ring-primary ring-offset-2 bg-primary text-primary-foreground"
                     : isAnswered
-                      ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30'
-                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                      ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
+                      : "bg-muted text-muted-foreground hover:bg-muted/80"
                 }`}
-                title={`Question ${idx + 1}: ${isAnswered ? 'Answered' : 'Unanswered'}`}
+                title={`Question ${idx + 1}: ${isAnswered ? "Answered" : "Unanswered"}`}
               >
                 {idx + 1}
               </button>
-            )
+            );
           })}
         </div>
       </div>
@@ -195,21 +216,21 @@ export const TakeTestPage: React.FC = () => {
           <CardHeader>
             <CardTitle>Review Your Answers</CardTitle>
             <CardDescription>
-              Check your progress before final submission. Click on any question to modify
-              your answer.
+              Check your progress before final submission. Click on any question
+              to modify your answer.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             {questions.map((q, idx) => {
-              const selectedOptIds = answers[q.id] || []
-              const hasAnswer = selectedOptIds.length > 0
+              const selectedOptIds = answers[q.id] || [];
+              const hasAnswer = selectedOptIds.length > 0;
 
               return (
                 <div
                   key={q.id}
                   onClick={() => {
-                    setCurrentQuestionIndex(idx)
-                    setShowReview(false)
+                    setCurrentQuestionIndex(idx);
+                    setShowReview(false);
                   }}
                   className="flex items-center justify-between p-3 rounded-lg border border-border hover:border-primary/50 transition-colors cursor-pointer"
                 >
@@ -217,7 +238,9 @@ export const TakeTestPage: React.FC = () => {
                     <span className="text-xs font-semibold text-muted-foreground">
                       Question #{idx + 1}
                     </span>
-                    <p className="text-sm font-medium line-clamp-1">{q.question_text}</p>
+                    <p className="text-sm font-medium line-clamp-1">
+                      {q.question_text}
+                    </p>
                   </div>
                   <div>
                     {hasAnswer ? (
@@ -231,7 +254,7 @@ export const TakeTestPage: React.FC = () => {
                     )}
                   </div>
                 </div>
-              )
+              );
             })}
           </CardContent>
           <CardFooter className="flex justify-between border-t border-border pt-4">
@@ -256,9 +279,9 @@ export const TakeTestPage: React.FC = () => {
                   Question {currentQuestionIndex + 1} of {totalCount}
                 </Badge>
                 <span className="capitalize font-medium">
-                  {currentQuestion.question_type.replace('_', ' ')}
-                  {currentQuestion.question_type === 'multiple_choice' &&
-                    ' (Select all that apply)'}
+                  {currentQuestion.question_type.replace("_", " ")}
+                  {currentQuestion.question_type === "multiple_choice" &&
+                    " (Select all that apply)"}
                 </span>
               </div>
               <CardTitle className="text-xl font-bold leading-snug">
@@ -268,9 +291,10 @@ export const TakeTestPage: React.FC = () => {
 
             <CardContent className="space-y-3">
               {currentQuestion.options.map((option) => {
-                const selectedList = answers[currentQuestion.id] || []
-                const isSelected = selectedList.includes(option.id)
-                const isMulti = currentQuestion.question_type === 'multiple_choice'
+                const selectedList = answers[currentQuestion.id] || [];
+                const isSelected = selectedList.includes(option.id);
+                const isMulti =
+                  currentQuestion.question_type === "multiple_choice";
 
                 return (
                   <div
@@ -280,26 +304,28 @@ export const TakeTestPage: React.FC = () => {
                     }
                     className={`flex items-center gap-3.5 p-3.5 rounded-xl border transition-all cursor-pointer select-none ${
                       isSelected
-                        ? 'border-primary bg-primary/10 shadow-xs text-foreground font-medium'
-                        : 'border-border hover:border-primary/40 hover:bg-muted/40 text-foreground'
+                        ? "border-primary bg-primary/10 shadow-xs text-foreground font-medium"
+                        : "border-border hover:border-primary/40 hover:bg-muted/40 text-foreground"
                     }`}
                   >
                     {/* Checkbox / Radio Visual */}
                     <div
                       className={`flex h-5 w-5 shrink-0 items-center justify-center transition-colors ${
-                        isMulti ? 'rounded-md' : 'rounded-full'
+                        isMulti ? "rounded-md" : "rounded-full"
                       } border ${
                         isSelected
-                          ? 'border-primary bg-primary text-primary-foreground'
-                          : 'border-input'
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-input"
                       }`}
                     >
-                      {isSelected && <Check className="h-3.5 w-3.5 stroke-[3]" />}
+                      {isSelected && (
+                        <Check className="h-3.5 w-3.5 stroke-[3]" />
+                      )}
                     </div>
 
                     <span className="text-sm flex-1">{option.text}</span>
                   </div>
-                )
+                );
               })}
             </CardContent>
 
@@ -356,5 +382,5 @@ export const TakeTestPage: React.FC = () => {
         onCancel={() => setShowConfirmSubmit(false)}
       />
     </div>
-  )
-}
+  );
+};

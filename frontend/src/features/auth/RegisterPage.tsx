@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
-import type { AppDispatch } from '@/store/store'
-import { setCredentials } from '@/store/slices/authSlice'
-import { navigate } from '@/store/slices/navigationSlice'
-import { addToast } from '@/store/slices/uiSlice'
-import { useRegisterMutation } from '@/store/api/authApi'
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "@/store/store";
+import { setCredentials } from "@/store/slices/authSlice";
+import { navigate } from "@/store/slices/navigationSlice";
+import { addToast } from "@/store/slices/uiSlice";
+import { useRegisterMutation } from "@/store/api/authApi";
 import {
   Card,
   CardContent,
@@ -12,34 +12,34 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { AlertCircle, UserPlus } from 'lucide-react'
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { AlertCircle, UserPlus } from "lucide-react";
 
 export const RegisterPage: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>()
-  const [registerTrigger, { isLoading }] = useRegisterMutation()
+  const dispatch = useDispatch<AppDispatch>();
+  const [registerTrigger, { isLoading }] = useRegisterMutation();
 
-  const [username, setUsername] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [passwordConfirm, setPasswordConfirm] = useState('')
-  const [error, setError] = useState<string | null>(null)
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
+    e.preventDefault();
+    setError(null);
 
     if (password !== passwordConfirm) {
-      setError('Passwords do not match')
-      return
+      setError("Passwords do not match");
+      return;
     }
 
     if (password.length < 6) {
-      setError('Password must be at least 6 characters')
-      return
+      setError("Password must be at least 6 characters");
+      return;
     }
 
     try {
@@ -48,22 +48,22 @@ export const RegisterPage: React.FC = () => {
         email: email.trim(),
         password,
         password_confirm: passwordConfirm,
-      }).unwrap()
+      }).unwrap();
 
-      dispatch(setCredentials(response))
+      dispatch(setCredentials(response));
       dispatch(
         addToast({
-          type: 'success',
+          type: "success",
           text: `Account created! Welcome, ${response.user.username}`,
-        }),
-      )
-      dispatch(navigate({ view: 'dashboard' }))
+        })
+      );
+      dispatch(navigate({ view: "dashboard" }));
     } catch (err: any) {
       const message =
-        err?.data?.detail || 'Registration failed. Please check your details.'
-      setError(message)
+        err?.data?.detail || "Registration failed. Please check your details.";
+      setError(message);
     }
-  }
+  };
 
   return (
     <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center px-4 py-12">
@@ -139,14 +139,18 @@ export const RegisterPage: React.FC = () => {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
-            <Button type="submit" className="w-full font-semibold" disabled={isLoading}>
-              {isLoading ? 'Creating Account...' : 'Sign Up'}
+            <Button
+              type="submit"
+              className="w-full font-semibold"
+              disabled={isLoading}
+            >
+              {isLoading ? "Creating Account..." : "Sign Up"}
             </Button>
             <p className="text-center text-sm text-muted-foreground">
-              Already have an account?{' '}
+              Already have an account?{" "}
               <button
                 type="button"
-                onClick={() => dispatch(navigate({ view: 'login' }))}
+                onClick={() => dispatch(navigate({ view: "login" }))}
                 className="font-medium text-primary hover:underline cursor-pointer"
               >
                 Log in
@@ -156,5 +160,5 @@ export const RegisterPage: React.FC = () => {
         </form>
       </Card>
     </div>
-  )
-}
+  );
+};

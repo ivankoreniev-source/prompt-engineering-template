@@ -1,6 +1,9 @@
 ---
 description: Backend Security and Data Persistence Rules for QuizCraft
 globs: ["backend/**"]
+pathFilters: ["backend/**"]
+PathFilters: ["backend/**"]
+paths: ["backend/**"]
 ---
 
 # Backend Security & Data Rules

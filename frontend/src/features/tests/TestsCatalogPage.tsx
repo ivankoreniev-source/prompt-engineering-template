@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import type { AppDispatch, RootState } from '@/store/store'
-import { navigate } from '@/store/slices/navigationSlice'
-import { useGetPublishedTestsQuery } from '@/store/api/testsApi'
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "@/store/store";
+import { navigate } from "@/store/slices/navigationSlice";
+import { useGetPublishedTestsQuery } from "@/store/api/testsApi";
 import {
   Card,
   CardContent,
@@ -10,10 +10,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import {
   ArrowRight,
   BookOpen,
@@ -23,43 +23,45 @@ import {
   PlusCircle,
   Search,
   User,
-} from 'lucide-react'
+} from "lucide-react";
 
 export const TestsCatalogPage: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>()
-  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated)
+  const dispatch = useDispatch<AppDispatch>();
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.isAuthenticated
+  );
 
-  const [search, setSearch] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState<string>('all')
-  const [selectedDifficulty, setSelectedDifficulty] = useState<string>('all')
+  const [search, setSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string>("all");
 
   const { data: tests, isLoading } = useGetPublishedTestsQuery({
     search: search.trim() || undefined,
-    category: selectedCategory !== 'all' ? selectedCategory : undefined,
-    difficulty: selectedDifficulty !== 'all' ? selectedDifficulty : undefined,
-  })
+    category: selectedCategory !== "all" ? selectedCategory : undefined,
+    difficulty: selectedDifficulty !== "all" ? selectedDifficulty : undefined,
+  });
 
   const categories = [
-    'all',
-    'General',
-    'Science',
-    'Programming',
-    'History',
-    'Math',
-    'Geography',
-    'Languages',
-  ]
+    "all",
+    "General",
+    "Science",
+    "Programming",
+    "History",
+    "Math",
+    "Geography",
+    "Languages",
+  ];
 
   const difficultyVariant = (diff: string) => {
     switch (diff) {
-      case 'easy':
-        return 'success'
-      case 'hard':
-        return 'destructive'
+      case "easy":
+        return "success";
+      case "hard":
+        return "destructive";
       default:
-        return 'warning'
+        return "warning";
     }
-  }
+  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-8">
@@ -71,13 +73,13 @@ export const TestsCatalogPage: React.FC = () => {
             Explore Published Tests
           </h1>
           <p className="text-muted-foreground mt-1 text-sm">
-            Browse through hundreds of user-created tests, sharpen your skills, and
-            challenge your mind.
+            Browse through hundreds of user-created tests, sharpen your skills,
+            and challenge your mind.
           </p>
         </div>
         {isAuthenticated && (
           <Button
-            onClick={() => dispatch(navigate({ view: 'create-test' }))}
+            onClick={() => dispatch(navigate({ view: "create-test" }))}
             className="self-start md:self-auto gap-2 font-semibold shadow-xs"
           >
             <PlusCircle className="h-4 w-4" />
@@ -149,17 +151,19 @@ export const TestsCatalogPage: React.FC = () => {
           </div>
           <h3 className="text-lg font-semibold">No tests match your filter</h3>
           <p className="text-sm text-muted-foreground mt-1 max-w-sm mx-auto">
-            Try adjusting your search query, selecting different categories, or create a
-            brand new test.
+            Try adjusting your search query, selecting different categories, or
+            create a brand new test.
           </p>
-          {(search || selectedCategory !== 'all' || selectedDifficulty !== 'all') && (
+          {(search ||
+            selectedCategory !== "all" ||
+            selectedDifficulty !== "all") && (
             <Button
               variant="outline"
               size="sm"
               onClick={() => {
-                setSearch('')
-                setSelectedCategory('all')
-                setSelectedDifficulty('all')
+                setSearch("");
+                setSelectedCategory("all");
+                setSelectedDifficulty("all");
               }}
               className="mt-4"
             >
@@ -190,7 +194,7 @@ export const TestsCatalogPage: React.FC = () => {
                   {test.title}
                 </CardTitle>
                 <CardDescription className="line-clamp-2 text-xs min-h-[2rem]">
-                  {test.description || 'No description provided.'}
+                  {test.description || "No description provided."}
                 </CardDescription>
               </CardHeader>
 
@@ -208,7 +212,8 @@ export const TestsCatalogPage: React.FC = () => {
                 <div className="flex items-center gap-1 text-[11px]">
                   <Calendar className="h-3 w-3" />
                   <span>
-                    Published on {new Date(test.created_at).toLocaleDateString()}
+                    Published on{" "}
+                    {new Date(test.created_at).toLocaleDateString()}
                   </span>
                 </div>
               </CardContent>
@@ -219,9 +224,9 @@ export const TestsCatalogPage: React.FC = () => {
                   onClick={() =>
                     dispatch(
                       navigate({
-                        view: isAuthenticated ? 'take-test' : 'login',
+                        view: isAuthenticated ? "take-test" : "login",
                         param: test.id,
-                      }),
+                      })
                     )
                   }
                 >
@@ -234,5 +239,5 @@ export const TestsCatalogPage: React.FC = () => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};

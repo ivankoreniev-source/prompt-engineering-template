@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
-import type { AppDispatch } from '@/store/store'
-import { setCredentials } from '@/store/slices/authSlice'
-import { navigate } from '@/store/slices/navigationSlice'
-import { addToast } from '@/store/slices/uiSlice'
-import { useLoginMutation } from '@/store/api/authApi'
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "@/store/store";
+import { setCredentials } from "@/store/slices/authSlice";
+import { navigate } from "@/store/slices/navigationSlice";
+import { addToast } from "@/store/slices/uiSlice";
+import { useLoginMutation } from "@/store/api/authApi";
 import {
   Card,
   CardContent,
@@ -12,46 +12,49 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { AlertCircle, LogIn } from 'lucide-react'
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { AlertCircle, LogIn } from "lucide-react";
 
 export const LoginPage: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>()
-  const [loginTrigger, { isLoading }] = useLoginMutation()
+  const dispatch = useDispatch<AppDispatch>();
+  const [loginTrigger, { isLoading }] = useLoginMutation();
 
-  const [usernameOrEmail, setUsernameOrEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
+  const [usernameOrEmail, setUsernameOrEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
+    e.preventDefault();
+    setError(null);
 
     if (!usernameOrEmail.trim() || !password) {
-      setError('Please provide both username/email and password')
-      return
+      setError("Please provide both username/email and password");
+      return;
     }
 
     try {
       const response = await loginTrigger({
         username_or_email: usernameOrEmail.trim(),
         password,
-      }).unwrap()
+      }).unwrap();
 
-      dispatch(setCredentials(response))
+      dispatch(setCredentials(response));
       dispatch(
-        addToast({ type: 'success', text: `Welcome back, ${response.user.username}!` }),
-      )
-      dispatch(navigate({ view: 'dashboard' }))
+        addToast({
+          type: "success",
+          text: `Welcome back, ${response.user.username}!`,
+        })
+      );
+      dispatch(navigate({ view: "dashboard" }));
     } catch (err: any) {
       const message =
-        err?.data?.detail || 'Failed to login. Please check your credentials.'
-      setError(message)
+        err?.data?.detail || "Failed to login. Please check your credentials.";
+      setError(message);
     }
-  }
+  };
 
   return (
     <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center px-4 py-12">
@@ -100,14 +103,18 @@ export const LoginPage: React.FC = () => {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
-            <Button type="submit" className="w-full font-semibold" disabled={isLoading}>
-              {isLoading ? 'Logging in...' : 'Log In'}
+            <Button
+              type="submit"
+              className="w-full font-semibold"
+              disabled={isLoading}
+            >
+              {isLoading ? "Logging in..." : "Log In"}
             </Button>
             <p className="text-center text-sm text-muted-foreground">
-              Don't have an account?{' '}
+              Don't have an account?{" "}
               <button
                 type="button"
-                onClick={() => dispatch(navigate({ view: 'register' }))}
+                onClick={() => dispatch(navigate({ view: "register" }))}
                 className="font-medium text-primary hover:underline cursor-pointer"
               >
                 Sign up
@@ -117,5 +124,5 @@ export const LoginPage: React.FC = () => {
         </form>
       </Card>
     </div>
-  )
-}
+  );
+};

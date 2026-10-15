@@ -1,6 +1,9 @@
 ---
 description: Frontend Architecture Rules for React 19 + TypeScript (QuizCraft)
 globs: ["frontend/**"]
+pathFilters: ["frontend/**"]
+PathFilters: ["frontend/**"]
+paths: ["frontend/**"]
 ---
 
 # Frontend Architecture Rules

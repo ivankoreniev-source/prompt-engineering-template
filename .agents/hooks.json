@@ -3,6 +3,8 @@
     "PreToolUse": [
       {
         "matcher": "run_command|write_to_file|replace_file_content",
+        "pathFilters": ["backend/**"],
+        "PathFilters": ["backend/**"],
         "hooks": [
           {
             "type": "command",
@@ -16,6 +18,8 @@
   "backend-architecture-reminder": {
     "PreInvocation": [
       {
+        "pathFilters": ["backend/**"],
+        "PathFilters": ["backend/**"],
         "type": "command",
         "command": "python hooks/backend_architecture_reminder.py",
         "timeout": 10
@@ -26,6 +30,8 @@
     "PostToolUse": [
       {
         "matcher": "run_command|write_to_file|replace_file_content",
+        "pathFilters": ["backend/**"],
+        "PathFilters": ["backend/**"],
         "hooks": [
           {
             "type": "command",
@@ -40,6 +46,8 @@
     "PreToolUse": [
       {
         "matcher": "run_command|write_to_file|replace_file_content",
+        "pathFilters": ["frontend/**"],
+        "PathFilters": ["frontend/**"],
         "hooks": [
           {
             "type": "command",
@@ -53,6 +61,8 @@
   "frontend-architecture-reminder": {
     "PreInvocation": [
       {
+        "pathFilters": ["frontend/**"],
+        "PathFilters": ["frontend/**"],
         "type": "command",
         "command": "python hooks/frontend_architecture_reminder.py",
         "timeout": 10
@@ -63,6 +73,8 @@
     "PostToolUse": [
       {
         "matcher": "run_command|write_to_file|replace_file_content",
+        "pathFilters": ["frontend/**"],
+        "PathFilters": ["frontend/**"],
         "hooks": [
           {
             "type": "command",

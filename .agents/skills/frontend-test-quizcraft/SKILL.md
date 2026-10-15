@@ -3,6 +3,9 @@ name: frontend-test-quizcraft
 description: >-
   Use this skill exclusively for running frontend builds, typechecking (`tsc -b`),
   linting (`oxlint`), formatting (`prettier`), and verifying code quality for QuizCraft. Do not use for backend tasks.
+pathFilters: ["frontend/**"]
+PathFilters: ["frontend/**"]
+globs: ["frontend/**"]
 ---
 
 # Testing & Verifying the QuizCraft Frontend

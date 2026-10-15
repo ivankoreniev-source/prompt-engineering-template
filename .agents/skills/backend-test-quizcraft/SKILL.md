@@ -3,6 +3,9 @@ name: backend-test-quizcraft
 description: >-
   Use this skill exclusively for running pytest, ruff linter/formatter, mypy type checker,
   validating API contracts, or executing backend unit and integration tests for QuizCraft. Do not use for frontend tasks.
+pathFilters: ["backend/**"]
+PathFilters: ["backend/**"]
+globs: ["backend/**"]
 ---
 
 # Testing & Verifying the QuizCraft Backend

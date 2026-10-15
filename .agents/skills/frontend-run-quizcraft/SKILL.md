@@ -3,6 +3,9 @@ name: frontend-run-quizcraft
 description: >-
   Use this skill exclusively for running or launching the QuizCraft React Vite
   frontend development server on port 5174. Do not use for backend tasks.
+pathFilters: ["frontend/**"]
+PathFilters: ["frontend/**"]
+globs: ["frontend/**"]
 ---
 
 # Running the QuizCraft Frontend

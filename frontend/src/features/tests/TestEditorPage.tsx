@@ -1,32 +1,32 @@
-import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import type { AppDispatch, RootState } from '@/store/store'
-import { navigate } from '@/store/slices/navigationSlice'
-import { addToast } from '@/store/slices/uiSlice'
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "@/store/store";
+import { navigate } from "@/store/slices/navigationSlice";
+import { addToast } from "@/store/slices/uiSlice";
 import {
   useCreateTestMutation,
   useGetTestForCreatorQuery,
   usePublishTestMutation,
   useUpdateTestMutation,
-} from '@/store/api/testsApi'
+} from "@/store/api/testsApi";
 import type {
   AnswerOption,
   DifficultyLevel,
   QuestionInput,
   QuestionType,
-} from '@/types/test'
+} from "@/types/test";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Badge } from '@/components/ui/badge'
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
 import {
   AlertCircle,
   ArrowLeft,
@@ -37,71 +37,76 @@ import {
   Save,
   Send,
   Trash2,
-} from 'lucide-react'
+} from "lucide-react";
 
-const createDefaultQuestion = (type: QuestionType = 'single_choice'): QuestionInput => {
-  const qId = 'temp_q_' + Date.now().toString() + Math.random().toString(36).slice(2, 5)
-  if (type === 'true_false') {
-    const optTrue = { id: 'opt_true_' + Date.now(), text: 'True' }
-    const optFalse = { id: 'opt_false_' + Date.now(), text: 'False' }
+const createDefaultQuestion = (
+  type: QuestionType = "single_choice"
+): QuestionInput => {
+  const qId =
+    "temp_q_" + Date.now().toString() + Math.random().toString(36).slice(2, 5);
+  if (type === "true_false") {
+    const optTrue = { id: "opt_true_" + Date.now(), text: "True" };
+    const optFalse = { id: "opt_false_" + Date.now(), text: "False" };
     return {
       id: qId,
-      question_text: '',
-      question_type: 'true_false',
+      question_text: "",
+      question_type: "true_false",
       options: [optTrue, optFalse],
       correct_answers: [optTrue.id],
-      explanation: '',
-    }
+      explanation: "",
+    };
   }
-  const opt1 = { id: 'opt_1_' + Date.now(), text: '' }
-  const opt2 = { id: 'opt_2_' + Date.now(), text: '' }
+  const opt1 = { id: "opt_1_" + Date.now(), text: "" };
+  const opt2 = { id: "opt_2_" + Date.now(), text: "" };
   return {
     id: qId,
-    question_text: '',
-    question_type: 'single_choice',
+    question_text: "",
+    question_type: "single_choice",
     options: [opt1, opt2],
     correct_answers: [opt1.id],
-    explanation: '',
-  }
-}
+    explanation: "",
+  };
+};
 
 interface TestEditorFormProps {
   initialTest?: {
-    id: string
-    title: string
-    description?: string
-    category: string
-    difficulty: DifficultyLevel
+    id: string;
+    title: string;
+    description?: string;
+    category: string;
+    difficulty: DifficultyLevel;
     questions: {
-      id: string
-      question_text: string
-      question_type: QuestionType
-      options: { id: string; text: string }[]
-      correct_answers: string[]
-      explanation?: string
-    }[]
-  }
-  editingTestId?: string | null
+      id: string;
+      question_text: string;
+      question_type: QuestionType;
+      options: { id: string; text: string }[];
+      correct_answers: string[];
+      explanation?: string;
+    }[];
+  };
+  editingTestId?: string | null;
 }
 
 const TestEditorForm: React.FC<TestEditorFormProps> = ({
   initialTest,
   editingTestId,
 }) => {
-  const dispatch = useDispatch<AppDispatch>()
-  const isEditing = !!editingTestId
+  const dispatch = useDispatch<AppDispatch>();
+  const isEditing = !!editingTestId;
 
-  const [createTest, { isLoading: isCreating }] = useCreateTestMutation()
-  const [updateTest, { isLoading: isUpdating }] = useUpdateTestMutation()
-  const [publishTest, { isLoading: isPublishing }] = usePublishTestMutation()
+  const [createTest, { isLoading: isCreating }] = useCreateTestMutation();
+  const [updateTest, { isLoading: isUpdating }] = useUpdateTestMutation();
+  const [publishTest, { isLoading: isPublishing }] = usePublishTestMutation();
 
   // Form State initialized directly from props
-  const [title, setTitle] = useState(initialTest?.title || '')
-  const [description, setDescription] = useState(initialTest?.description || '')
-  const [category, setCategory] = useState(initialTest?.category || 'General')
+  const [title, setTitle] = useState(initialTest?.title || "");
+  const [description, setDescription] = useState(
+    initialTest?.description || ""
+  );
+  const [category, setCategory] = useState(initialTest?.category || "General");
   const [difficulty, setDifficulty] = useState<DifficultyLevel>(
-    initialTest?.difficulty || 'medium',
-  )
+    initialTest?.difficulty || "medium"
+  );
   const [questions, setQuestions] = useState<QuestionInput[]>(() =>
     initialTest
       ? initialTest.questions.map((q) => ({
@@ -110,69 +115,72 @@ const TestEditorForm: React.FC<TestEditorFormProps> = ({
           question_type: q.question_type,
           options: q.options.map((opt) => ({ id: opt.id, text: opt.text })),
           correct_answers: [...q.correct_answers],
-          explanation: q.explanation || '',
+          explanation: q.explanation || "",
         }))
-      : [createDefaultQuestion()],
-  )
-  const [validationError, setValidationError] = useState<string | null>(null)
+      : [createDefaultQuestion()]
+  );
+  const [validationError, setValidationError] = useState<string | null>(null);
 
-  const handleAddQuestion = (type: QuestionType = 'single_choice') => {
-    const qId = 'temp_q_' + Date.now().toString() + Math.random().toString(36).slice(2, 5)
+  const handleAddQuestion = (type: QuestionType = "single_choice") => {
+    const qId =
+      "temp_q_" +
+      Date.now().toString() +
+      Math.random().toString(36).slice(2, 5);
 
-    let initialOptions: AnswerOption[] = []
-    let initialCorrect: string[] = []
+    let initialOptions: AnswerOption[] = [];
+    let initialCorrect: string[] = [];
 
-    if (type === 'true_false') {
-      const optTrue = { id: 'opt_true_' + Date.now(), text: 'True' }
-      const optFalse = { id: 'opt_false_' + Date.now(), text: 'False' }
-      initialOptions = [optTrue, optFalse]
-      initialCorrect = [optTrue.id]
+    if (type === "true_false") {
+      const optTrue = { id: "opt_true_" + Date.now(), text: "True" };
+      const optFalse = { id: "opt_false_" + Date.now(), text: "False" };
+      initialOptions = [optTrue, optFalse];
+      initialCorrect = [optTrue.id];
     } else {
-      const opt1 = { id: 'opt_1_' + Date.now(), text: '' }
-      const opt2 = { id: 'opt_2_' + Date.now(), text: '' }
-      initialOptions = [opt1, opt2]
-      initialCorrect = [opt1.id]
+      const opt1 = { id: "opt_1_" + Date.now(), text: "" };
+      const opt2 = { id: "opt_2_" + Date.now(), text: "" };
+      initialOptions = [opt1, opt2];
+      initialCorrect = [opt1.id];
     }
 
     setQuestions((prev) => [
       ...prev,
       {
         id: qId,
-        question_text: '',
+        question_text: "",
         question_type: type,
         options: initialOptions,
         correct_answers: initialCorrect,
-        explanation: '',
+        explanation: "",
       },
-    ])
-  }
+    ]);
+  };
 
   const handleRemoveQuestion = (index: number) => {
-    setQuestions((prev) => prev.filter((_, i) => i !== index))
-  }
+    setQuestions((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const handleQuestionTypeChange = (index: number, newType: QuestionType) => {
     setQuestions((prev) => {
-      const copy = [...prev]
-      const current = copy[index]
-      let newOptions: AnswerOption[] = []
-      let newCorrect: string[] = []
+      const copy = [...prev];
+      const current = copy[index];
+      let newOptions: AnswerOption[] = [];
+      let newCorrect: string[] = [];
 
-      if (newType === 'true_false') {
-        const optTrue = { id: 'opt_true_' + Date.now(), text: 'True' }
-        const optFalse = { id: 'opt_false_' + Date.now(), text: 'False' }
-        newOptions = [optTrue, optFalse]
-        newCorrect = [optTrue.id]
+      if (newType === "true_false") {
+        const optTrue = { id: "opt_true_" + Date.now(), text: "True" };
+        const optFalse = { id: "opt_false_" + Date.now(), text: "False" };
+        newOptions = [optTrue, optFalse];
+        newCorrect = [optTrue.id];
       } else {
         // Keep non-empty existing options or default to 2
         newOptions =
           current.options.length >= 2
             ? current.options.map((o) => ({ ...o }))
             : [
-                { id: 'opt_1_' + Date.now(), text: '' },
-                { id: 'opt_2_' + Date.now(), text: '' },
-              ]
-        newCorrect = newOptions.length > 0 ? [newOptions[0].id] : []
+                { id: "opt_1_" + Date.now(), text: "" },
+                { id: "opt_2_" + Date.now(), text: "" },
+              ];
+        newCorrect = newOptions.length > 0 ? [newOptions[0].id] : [];
       }
 
       copy[index] = {
@@ -180,161 +188,175 @@ const TestEditorForm: React.FC<TestEditorFormProps> = ({
         question_type: newType,
         options: newOptions,
         correct_answers: newCorrect,
-      }
-      return copy
-    })
-  }
+      };
+      return copy;
+    });
+  };
 
   const handleAddOption = (qIndex: number) => {
     setQuestions((prev) => {
-      const copy = [...prev]
-      const q = copy[qIndex]
+      const copy = [...prev];
+      const q = copy[qIndex];
       const newOpt = {
-        id: 'opt_' + Date.now() + Math.random().toString(36).slice(2, 4),
-        text: '',
-      }
+        id: "opt_" + Date.now() + Math.random().toString(36).slice(2, 4),
+        text: "",
+      };
       copy[qIndex] = {
         ...q,
         options: [...q.options, newOpt],
-      }
-      return copy
-    })
-  }
+      };
+      return copy;
+    });
+  };
 
   const handleRemoveOption = (qIndex: number, optId: string) => {
     setQuestions((prev) => {
-      const copy = [...prev]
-      const q = copy[qIndex]
+      const copy = [...prev];
+      const q = copy[qIndex];
       if (q.options.length <= 2) {
         dispatch(
-          addToast({ type: 'error', text: 'Each question must have at least 2 options' }),
-        )
-        return prev
+          addToast({
+            type: "error",
+            text: "Each question must have at least 2 options",
+          })
+        );
+        return prev;
       }
       copy[qIndex] = {
         ...q,
         options: q.options.filter((o) => o.id !== optId),
         correct_answers: q.correct_answers.filter((id) => id !== optId),
-      }
-      return copy
-    })
-  }
+      };
+      return copy;
+    });
+  };
 
-  const handleOptionTextChange = (qIndex: number, optId: string, text: string) => {
+  const handleOptionTextChange = (
+    qIndex: number,
+    optId: string,
+    text: string
+  ) => {
     setQuestions((prev) => {
-      const copy = [...prev]
-      const q = copy[qIndex]
+      const copy = [...prev];
+      const q = copy[qIndex];
       copy[qIndex] = {
         ...q,
         options: q.options.map((o) => (o.id === optId ? { ...o, text } : o)),
-      }
-      return copy
-    })
-  }
+      };
+      return copy;
+    });
+  };
 
   const handleToggleCorrectAnswer = (qIndex: number, optId: string) => {
     setQuestions((prev) => {
-      const copy = [...prev]
-      const q = copy[qIndex]
+      const copy = [...prev];
+      const q = copy[qIndex];
 
-      if (q.question_type === 'single_choice' || q.question_type === 'true_false') {
+      if (
+        q.question_type === "single_choice" ||
+        q.question_type === "true_false"
+      ) {
         // Single choice allows only 1 correct answer
         copy[qIndex] = {
           ...q,
           correct_answers: [optId],
-        }
+        };
       } else {
         // Multiple choice toggles
-        const exists = q.correct_answers.includes(optId)
-        let updated: string[]
+        const exists = q.correct_answers.includes(optId);
+        let updated: string[];
         if (exists) {
-          updated = q.correct_answers.filter((id) => id !== optId)
+          updated = q.correct_answers.filter((id) => id !== optId);
         } else {
-          updated = [...q.correct_answers, optId]
+          updated = [...q.correct_answers, optId];
         }
         copy[qIndex] = {
           ...q,
           correct_answers: updated,
-        }
+        };
       }
-      return copy
-    })
-  }
+      return copy;
+    });
+  };
 
   const validateTestLocally = (): string | null => {
     if (!title.trim()) {
-      return 'Test title cannot be empty'
+      return "Test title cannot be empty";
     }
     if (questions.length === 0) {
-      return 'Please add at least one question to the test'
+      return "Please add at least one question to the test";
     }
     for (let i = 0; i < questions.length; i++) {
-      const q = questions[i]
+      const q = questions[i];
       if (!q.question_text.trim()) {
-        return `Question #${i + 1} text is empty`
+        return `Question #${i + 1} text is empty`;
       }
       if (q.options.length < 2) {
-        return `Question #${i + 1} must have at least 2 options`
+        return `Question #${i + 1} must have at least 2 options`;
       }
       for (let j = 0; j < q.options.length; j++) {
         if (!q.options[j].text.trim()) {
-          return `Question #${i + 1}, Option #${j + 1} text is empty`
+          return `Question #${i + 1}, Option #${j + 1} text is empty`;
         }
       }
       if (q.correct_answers.length === 0) {
-        return `Question #${i + 1} must have at least one correct answer selected`
+        return `Question #${i + 1} must have at least one correct answer selected`;
       }
     }
-    return null
-  }
+    return null;
+  };
 
   const handleSave = async (andPublish = false) => {
-    setValidationError(null)
+    setValidationError(null);
 
     if (!title.trim()) {
-      setValidationError('Please specify a title for the test')
-      return
+      setValidationError("Please specify a title for the test");
+      return;
     }
 
     if (andPublish) {
-      const err = validateTestLocally()
+      const err = validateTestLocally();
       if (err) {
-        setValidationError(err)
-        return
+        setValidationError(err);
+        return;
       }
     }
 
     const payload = {
       title: title.trim(),
       description: description.trim(),
-      category: category.trim() || 'General',
+      category: category.trim() || "General",
       difficulty,
       questions,
-    }
+    };
 
     try {
-      let savedId = editingTestId
+      let savedId = editingTestId;
 
       if (isEditing && savedId) {
-        await updateTest({ id: savedId, payload }).unwrap()
-        dispatch(addToast({ type: 'success', text: 'Test updated successfully!' }))
+        await updateTest({ id: savedId, payload }).unwrap();
+        dispatch(
+          addToast({ type: "success", text: "Test updated successfully!" })
+        );
       } else {
-        const created = await createTest(payload).unwrap()
-        savedId = created.id
-        dispatch(addToast({ type: 'success', text: 'Test draft created!' }))
+        const created = await createTest(payload).unwrap();
+        savedId = created.id;
+        dispatch(addToast({ type: "success", text: "Test draft created!" }));
       }
 
       if (andPublish && savedId) {
-        await publishTest(savedId).unwrap()
-        dispatch(addToast({ type: 'success', text: 'Test published to catalog!' }))
+        await publishTest(savedId).unwrap();
+        dispatch(
+          addToast({ type: "success", text: "Test published to catalog!" })
+        );
       }
 
-      dispatch(navigate({ view: 'my-tests' }))
+      dispatch(navigate({ view: "my-tests" }));
     } catch (err: any) {
-      const message = err?.data?.detail || 'Failed to save test'
-      setValidationError(message)
+      const message = err?.data?.detail || "Failed to save test";
+      setValidationError(message);
     }
-  }
+  };
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 space-y-8">
@@ -344,16 +366,17 @@ const TestEditorForm: React.FC<TestEditorFormProps> = ({
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => dispatch(navigate({ view: 'my-tests' }))}
+            onClick={() => dispatch(navigate({ view: "my-tests" }))}
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-foreground">
-              {isEditing ? 'Edit Test' : 'Create New Test'}
+              {isEditing ? "Edit Test" : "Create New Test"}
             </h1>
             <p className="text-xs text-muted-foreground">
-              Configure test details, questions, correct answers, and explanations.
+              Configure test details, questions, correct answers, and
+              explanations.
             </p>
           </div>
         </div>
@@ -446,7 +469,9 @@ const TestEditorForm: React.FC<TestEditorFormProps> = ({
               <select
                 id="test-diff"
                 value={difficulty}
-                onChange={(e) => setDifficulty(e.target.value as DifficultyLevel)}
+                onChange={(e) =>
+                  setDifficulty(e.target.value as DifficultyLevel)
+                }
                 className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring capitalize"
               >
                 <option value="easy">Easy</option>
@@ -467,14 +492,15 @@ const TestEditorForm: React.FC<TestEditorFormProps> = ({
               Questions ({questions.length})
             </h2>
             <p className="text-xs text-muted-foreground">
-              Configure each question, its options, and the designated correct answer(s).
+              Configure each question, its options, and the designated correct
+              answer(s).
             </p>
           </div>
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
               size="sm"
-              onClick={() => handleAddQuestion('single_choice')}
+              onClick={() => handleAddQuestion("single_choice")}
               className="gap-1 text-xs"
             >
               <Plus className="h-3.5 w-3.5" />
@@ -483,7 +509,7 @@ const TestEditorForm: React.FC<TestEditorFormProps> = ({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => handleAddQuestion('multiple_choice')}
+              onClick={() => handleAddQuestion("multiple_choice")}
               className="gap-1 text-xs"
             >
               <Plus className="h-3.5 w-3.5" />
@@ -492,7 +518,7 @@ const TestEditorForm: React.FC<TestEditorFormProps> = ({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => handleAddQuestion('true_false')}
+              onClick={() => handleAddQuestion("true_false")}
               className="gap-1 text-xs"
             >
               <Plus className="h-3.5 w-3.5" />
@@ -504,12 +530,16 @@ const TestEditorForm: React.FC<TestEditorFormProps> = ({
         {questions.length === 0 ? (
           <Card className="p-8 text-center bg-muted/20 border-dashed">
             <p className="text-sm text-muted-foreground">
-              No questions yet. Click one of the buttons above to add your first question.
+              No questions yet. Click one of the buttons above to add your first
+              question.
             </p>
           </Card>
         ) : (
           questions.map((q, qIndex) => (
-            <Card key={q.id || qIndex} className="shadow-xs border-l-4 border-l-primary">
+            <Card
+              key={q.id || qIndex}
+              className="shadow-xs border-l-4 border-l-primary"
+            >
               <CardHeader className="pb-3 flex flex-row items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Badge variant="default" className="text-xs">
@@ -518,12 +548,19 @@ const TestEditorForm: React.FC<TestEditorFormProps> = ({
                   <select
                     value={q.question_type}
                     onChange={(e) =>
-                      handleQuestionTypeChange(qIndex, e.target.value as QuestionType)
+                      handleQuestionTypeChange(
+                        qIndex,
+                        e.target.value as QuestionType
+                      )
                     }
                     className="h-7 rounded-md border border-input bg-background px-2 text-xs font-medium cursor-pointer"
                   >
-                    <option value="single_choice">Single Choice (1 correct)</option>
-                    <option value="multiple_choice">Multiple Choice (1+ correct)</option>
+                    <option value="single_choice">
+                      Single Choice (1 correct)
+                    </option>
+                    <option value="multiple_choice">
+                      Multiple Choice (1+ correct)
+                    </option>
                     <option value="true_false">True / False</option>
                   </select>
                 </div>
@@ -546,12 +583,12 @@ const TestEditorForm: React.FC<TestEditorFormProps> = ({
                     placeholder="Enter question prompt..."
                     value={q.question_text}
                     onChange={(e) => {
-                      const text = e.target.value
+                      const text = e.target.value;
                       setQuestions((prev) => {
-                        const copy = [...prev]
-                        copy[qIndex] = { ...copy[qIndex], question_text: text }
-                        return copy
-                      })
+                        const copy = [...prev];
+                        copy[qIndex] = { ...copy[qIndex], question_text: text };
+                        return copy;
+                      });
                     }}
                     required
                   />
@@ -563,7 +600,7 @@ const TestEditorForm: React.FC<TestEditorFormProps> = ({
                     <Label className="text-xs font-semibold text-muted-foreground">
                       Answer Options (Click checkmark to select correct answer)
                     </Label>
-                    {q.question_type !== 'true_false' && (
+                    {q.question_type !== "true_false" && (
                       <Button
                         type="button"
                         variant="ghost"
@@ -579,28 +616,32 @@ const TestEditorForm: React.FC<TestEditorFormProps> = ({
 
                   <div className="space-y-2">
                     {q.options.map((opt, optIndex) => {
-                      const isCorrect = q.correct_answers.includes(opt.id)
-                      const isTrueFalse = q.question_type === 'true_false'
+                      const isCorrect = q.correct_answers.includes(opt.id);
+                      const isTrueFalse = q.question_type === "true_false";
 
                       return (
                         <div
                           key={opt.id}
                           className={`flex items-center gap-2 rounded-lg border p-2 transition-colors ${
                             isCorrect
-                              ? 'bg-emerald-500/10 border-emerald-500/30'
-                              : 'bg-background border-border'
+                              ? "bg-emerald-500/10 border-emerald-500/30"
+                              : "bg-background border-border"
                           }`}
                         >
                           {/* Correct Answer Toggle Button */}
                           <button
                             type="button"
-                            onClick={() => handleToggleCorrectAnswer(qIndex, opt.id)}
+                            onClick={() =>
+                              handleToggleCorrectAnswer(qIndex, opt.id)
+                            }
                             className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border text-xs font-bold transition-all cursor-pointer ${
                               isCorrect
-                                ? 'bg-emerald-600 text-white border-emerald-600'
-                                : 'border-input hover:border-primary text-muted-foreground'
+                                ? "bg-emerald-600 text-white border-emerald-600"
+                                : "border-input hover:border-primary text-muted-foreground"
                             }`}
-                            title={isCorrect ? 'Correct Answer' : 'Mark as Correct'}
+                            title={
+                              isCorrect ? "Correct Answer" : "Mark as Correct"
+                            }
                           >
                             {isCorrect && <Check className="h-3.5 w-3.5" />}
                           </button>
@@ -611,9 +652,13 @@ const TestEditorForm: React.FC<TestEditorFormProps> = ({
                             value={opt.text}
                             disabled={isTrueFalse}
                             onChange={(e) =>
-                              handleOptionTextChange(qIndex, opt.id, e.target.value)
+                              handleOptionTextChange(
+                                qIndex,
+                                opt.id,
+                                e.target.value
+                              )
                             }
-                            className={`h-8 text-sm ${isCorrect ? 'font-medium' : ''}`}
+                            className={`h-8 text-sm ${isCorrect ? "font-medium" : ""}`}
                           />
 
                           {/* Remove option button (if > 2 and not True/False) */}
@@ -629,7 +674,7 @@ const TestEditorForm: React.FC<TestEditorFormProps> = ({
                             </Button>
                           )}
                         </div>
-                      )
+                      );
                     })}
                   </div>
                 </div>
@@ -642,14 +687,14 @@ const TestEditorForm: React.FC<TestEditorFormProps> = ({
                   </Label>
                   <Textarea
                     placeholder="Explain why this answer is correct..."
-                    value={q.explanation || ''}
+                    value={q.explanation || ""}
                     onChange={(e) => {
-                      const text = e.target.value
+                      const text = e.target.value;
                       setQuestions((prev) => {
-                        const copy = [...prev]
-                        copy[qIndex] = { ...copy[qIndex], explanation: text }
-                        return copy
-                      })
+                        const copy = [...prev];
+                        copy[qIndex] = { ...copy[qIndex], explanation: text };
+                        return copy;
+                      });
                     }}
                     rows={2}
                     className="text-xs"
@@ -665,7 +710,7 @@ const TestEditorForm: React.FC<TestEditorFormProps> = ({
       <div className="flex justify-end gap-3 pt-4 border-t border-border">
         <Button
           variant="outline"
-          onClick={() => dispatch(navigate({ view: 'my-tests' }))}
+          onClick={() => dispatch(navigate({ view: "my-tests" }))}
         >
           Cancel
         </Button>
@@ -688,33 +733,33 @@ const TestEditorForm: React.FC<TestEditorFormProps> = ({
         </Button>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export const TestEditorPage: React.FC = () => {
-  const editingTestId = useSelector((state: RootState) => state.navigation.param)
-  const isEditing = !!editingTestId
+  const editingTestId = useSelector(
+    (state: RootState) => state.navigation.param
+  );
+  const isEditing = !!editingTestId;
 
-  const { data: existingTest, isLoading: loadingExisting } = useGetTestForCreatorQuery(
-    editingTestId || '',
-    {
+  const { data: existingTest, isLoading: loadingExisting } =
+    useGetTestForCreatorQuery(editingTestId || "", {
       skip: !isEditing,
-    },
-  )
+    });
 
   if (isEditing && loadingExisting) {
     return (
       <div className="mx-auto max-w-4xl py-12 px-4 space-y-4">
         <div className="h-64 rounded-xl border border-border bg-muted/30 animate-pulse" />
       </div>
-    )
+    );
   }
 
   return (
     <TestEditorForm
-      key={existingTest?.id || 'new'}
+      key={existingTest?.id || "new"}
       initialTest={existingTest}
       editingTestId={editingTestId}
     />
-  )
-}
+  );
+};

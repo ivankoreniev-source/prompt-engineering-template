@@ -1,6 +1,9 @@
 ---
 description: Backend Python & FastAPI Coding Standards for QuizCraft
 globs: ["backend/**"]
+pathFilters: ["backend/**"]
+PathFilters: ["backend/**"]
+paths: ["backend/**"]
 ---
 
 # Backend Coding Standards

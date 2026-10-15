@@ -3,6 +3,9 @@ name: backend-run-quizcraft
 description: >-
   Use this skill exclusively for running, starting, or serving the QuizCraft
   FastAPI backend server on port 8001. Do not use for frontend tasks.
+pathFilters: ["backend/**"]
+PathFilters: ["backend/**"]
+globs: ["backend/**"]
 ---
 
 # Running the QuizCraft Backend

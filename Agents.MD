@@ -7,17 +7,18 @@ This repository is a full-stack web application: **FastAPI** backend and **React
 - `backend/` — API with layered architecture (`types`, `models`, `repositories`, `services`, `routers`). Data is stored in JSON files under `backend/data/` (one file per entity, contents are a JSON array). Uses **uv** / **pip**, **Pydantic v2**, and FastAPI dependency injection (routers depend on services; services use repositories).
 - `frontend/` — **React + TypeScript**, **Vite**, **shadcn/ui**, **Redux Toolkit** (RTK Query for API, slices for UI state).
 - `docs/` — Feature documentation organized per feature (`docs/<feature>/`), with unified `business-requirements.md`, `architecture.md`, and `test-cases.md` covering both frontend and backend for that feature. Includes `docs/brd.txt` (authoritative Business Requirements Document & prompt).
-- `.agents/` — Antigravity agent customizations organized into Frontend & Backend configurations:
-  - `rules/`:
-    - Backend: `backend-architecture.md`, `backend-coding-standards.md`, `backend-security-and-data.md` (scoped to `backend/**`)
-    - Frontend: `frontend-architecture.md`, `frontend-coding-standards.md`, `frontend-security-and-data.md` (scoped to `frontend/**`)
+- `.agents/` — Antigravity agent customizations organized into Shared, Frontend & Backend configurations:
+  - `rules/` (scoped via `PathFilters` / `pathFilters` / `globs`):
+    - Shared: `shared-rules.md` (scoped to `**/*`)
+    - Backend: `backend-architecture.md`, `backend-coding-standards.md`, `backend-security-and-data.md` (`PathFilters: ["backend/**"]`)
+    - Frontend: `frontend-architecture.md`, `frontend-coding-standards.md`, `frontend-security-and-data.md` (`PathFilters: ["frontend/**"]`)
     - Directory rules: `backend/AGENTS.md`, `frontend/AGENTS.md`
-  - `skills/`:
-    - Backend: `backend-run-quizcraft`, `backend-test-quizcraft`, `backend-add-quizcraft-feature`
-    - Frontend: `frontend-run-quizcraft`, `frontend-test-quizcraft`, `frontend-add-quizcraft-feature`
-  - `hooks.json` & `hooks/`:
-    - Backend hooks: `backend-safety-guard`, `backend-architecture-reminder`, `backend-post-tool-audit`
-    - Frontend hooks: `frontend-safety-guard`, `frontend-architecture-reminder`, `frontend-post-tool-audit`
+  - `skills/` (`PathFilters` scoped):
+    - Backend: `backend-run-quizcraft`, `backend-test-quizcraft`, `backend-add-quizcraft-feature` (`PathFilters: ["backend/**"]`)
+    - Frontend: `frontend-run-quizcraft`, `frontend-test-quizcraft`, `frontend-add-quizcraft-feature` (`PathFilters: ["frontend/**"]`)
+  - `hooks.json` & `hooks/` (`PathFilters` scoped):
+    - Backend hooks: `backend-safety-guard`, `backend-architecture-reminder`, `backend-post-tool-audit` (`PathFilters: ["backend/**"]`)
+    - Frontend hooks: `frontend-safety-guard`, `frontend-architecture-reminder`, `frontend-post-tool-audit` (`PathFilters: ["frontend/**"]`)
 
 ## Current scope
 
@@ -27,7 +28,7 @@ This repository is a full-stack web application: **FastAPI** backend and **React
 
 - Add new features under the same layer folders on the backend and under `src/features/` on the frontend.
 - Document each feature under a single consolidated folder: `docs/<feature>/`.
-- Keep AI assistant entry points minimal: this file is the source of truth; `Claude.md` points here.
+- Keep AI assistant entry points minimal: this file and `CLAUDE.md` serve as sources of truth for AI agents.
 - Adhere to the rules in `.agents/rules/`.
 
 ## Local development & Quality tooling

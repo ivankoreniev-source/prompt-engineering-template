@@ -1,6 +1,9 @@
 ---
 description: Frontend Security, Session, and Data Privacy Rules
 globs: ["frontend/**"]
+pathFilters: ["frontend/**"]
+PathFilters: ["frontend/**"]
+paths: ["frontend/**"]
 ---
 
 # Frontend Security & Data Rules

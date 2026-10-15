@@ -1,6 +1,9 @@
 ---
 description: Frontend TypeScript, React, and Styling Coding Standards
 globs: ["frontend/**"]
+pathFilters: ["frontend/**"]
+PathFilters: ["frontend/**"]
+paths: ["frontend/**"]
 ---
 
 # Frontend Coding Standards

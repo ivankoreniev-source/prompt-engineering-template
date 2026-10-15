@@ -3,6 +3,9 @@ name: frontend-add-quizcraft-feature
 description: >-
   Use this skill exclusively when implementing or modifying frontend UI features,
   components, pages, or RTK Query endpoints in `frontend/`. Do not use for backend tasks.
+pathFilters: ["frontend/**"]
+PathFilters: ["frontend/**"]
+globs: ["frontend/**"]
 ---
 
 # Adding a Frontend Feature to QuizCraft

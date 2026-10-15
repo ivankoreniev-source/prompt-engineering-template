@@ -1,10 +1,10 @@
-import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import type { AppDispatch, RootState } from '@/store/store'
-import { logout } from '@/store/slices/authSlice'
-import { navigate, type AppView } from '@/store/slices/navigationSlice'
-import { useLogoutMutation } from '@/store/api/authApi'
-import { Button } from '@/components/ui/button'
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "@/store/store";
+import { logout } from "@/store/slices/authSlice";
+import { navigate, type AppView } from "@/store/slices/navigationSlice";
+import { useLogoutMutation } from "@/store/api/authApi";
+import { Button } from "@/components/ui/button";
 import {
   BookOpen,
   CheckCircle,
@@ -16,44 +16,48 @@ import {
   PlusCircle,
   User as UserIcon,
   X,
-} from 'lucide-react'
+} from "lucide-react";
 
 export const Navbar: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>()
-  const { user, isAuthenticated } = useSelector((state: RootState) => state.auth)
-  const currentView = useSelector((state: RootState) => state.navigation.currentView)
-  const [logoutTrigger] = useLogoutMutation()
-  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false)
+  const dispatch = useDispatch<AppDispatch>();
+  const { user, isAuthenticated } = useSelector(
+    (state: RootState) => state.auth
+  );
+  const currentView = useSelector(
+    (state: RootState) => state.navigation.currentView
+  );
+  const [logoutTrigger] = useLogoutMutation();
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
   const handleNav = (view: AppView, param?: string | null) => {
-    dispatch(navigate({ view, param }))
-    setMobileMenuOpen(false)
-  }
+    dispatch(navigate({ view, param }));
+    setMobileMenuOpen(false);
+  };
 
   const handleLogout = async () => {
     try {
-      await logoutTrigger().unwrap()
+      await logoutTrigger().unwrap();
     } catch {
       // Ignore network errors on logout
     }
-    dispatch(logout())
-    dispatch(navigate({ view: 'dashboard' }))
-    setMobileMenuOpen(false)
-  }
+    dispatch(logout());
+    dispatch(navigate({ view: "dashboard" }));
+    setMobileMenuOpen(false);
+  };
 
   const linkClass = (view: AppView) =>
     `inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer ${
       currentView === view
-        ? 'bg-primary text-primary-foreground font-semibold shadow-xs'
-        : 'text-muted-foreground hover:text-foreground hover:bg-muted/80'
-    }`
+        ? "bg-primary text-primary-foreground font-semibold shadow-xs"
+        : "text-muted-foreground hover:text-foreground hover:bg-muted/80"
+    }`;
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Brand / Logo */}
         <div
-          onClick={() => handleNav('dashboard')}
+          onClick={() => handleNav("dashboard")}
           className="flex items-center gap-2.5 cursor-pointer select-none"
         >
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
@@ -72,28 +76,31 @@ export const Navbar: React.FC = () => {
         {/* Desktop Navigation Links */}
         <nav className="hidden md:flex items-center gap-1 lg:gap-2">
           <button
-            onClick={() => handleNav('dashboard')}
-            className={linkClass('dashboard')}
+            onClick={() => handleNav("dashboard")}
+            className={linkClass("dashboard")}
           >
             <Layers className="h-4 w-4" />
             Dashboard
           </button>
-          <button onClick={() => handleNav('tests')} className={linkClass('tests')}>
+          <button
+            onClick={() => handleNav("tests")}
+            className={linkClass("tests")}
+          >
             <BookOpen className="h-4 w-4" />
             Explore Tests
           </button>
           {isAuthenticated && (
             <>
               <button
-                onClick={() => handleNav('my-tests')}
-                className={linkClass('my-tests')}
+                onClick={() => handleNav("my-tests")}
+                className={linkClass("my-tests")}
               >
                 <FileQuestion className="h-4 w-4" />
                 My Tests
               </button>
               <button
-                onClick={() => handleNav('my-results')}
-                className={linkClass('my-results')}
+                onClick={() => handleNav("my-results")}
+                className={linkClass("my-results")}
               >
                 <CheckCircle className="h-4 w-4" />
                 My Results
@@ -109,18 +116,18 @@ export const Navbar: React.FC = () => {
               <Button
                 variant="default"
                 size="sm"
-                onClick={() => handleNav('create-test')}
+                onClick={() => handleNav("create-test")}
                 className="gap-1.5 shadow-xs"
               >
                 <PlusCircle className="h-4 w-4" />
                 Create Test
               </Button>
               <button
-                onClick={() => handleNav('profile')}
+                onClick={() => handleNav("profile")}
                 className={`flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors cursor-pointer border ${
-                  currentView === 'profile'
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-border text-foreground hover:bg-muted'
+                  currentView === "profile"
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border text-foreground hover:bg-muted"
                 }`}
                 title="Profile & Settings"
               >
@@ -140,10 +147,18 @@ export const Navbar: React.FC = () => {
             </>
           ) : (
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="sm" onClick={() => handleNav('login')}>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleNav("login")}
+              >
                 Log In
               </Button>
-              <Button variant="default" size="sm" onClick={() => handleNav('register')}>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => handleNav("register")}
+              >
                 Sign Up
               </Button>
             </div>
@@ -158,7 +173,11 @@ export const Navbar: React.FC = () => {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
           >
-            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {mobileMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
           </Button>
         </div>
       </div>
@@ -168,42 +187,45 @@ export const Navbar: React.FC = () => {
         <div className="border-b border-border bg-background px-4 py-4 md:hidden space-y-2">
           <div className="flex flex-col gap-1">
             <button
-              onClick={() => handleNav('dashboard')}
-              className={linkClass('dashboard')}
+              onClick={() => handleNav("dashboard")}
+              className={linkClass("dashboard")}
             >
               <Layers className="h-4 w-4" />
               Dashboard
             </button>
-            <button onClick={() => handleNav('tests')} className={linkClass('tests')}>
+            <button
+              onClick={() => handleNav("tests")}
+              className={linkClass("tests")}
+            >
               <BookOpen className="h-4 w-4" />
               Explore Tests
             </button>
             {isAuthenticated ? (
               <>
                 <button
-                  onClick={() => handleNav('my-tests')}
-                  className={linkClass('my-tests')}
+                  onClick={() => handleNav("my-tests")}
+                  className={linkClass("my-tests")}
                 >
                   <FileQuestion className="h-4 w-4" />
                   My Tests
                 </button>
                 <button
-                  onClick={() => handleNav('my-results')}
-                  className={linkClass('my-results')}
+                  onClick={() => handleNav("my-results")}
+                  className={linkClass("my-results")}
                 >
                   <CheckCircle className="h-4 w-4" />
                   My Results
                 </button>
                 <button
-                  onClick={() => handleNav('create-test')}
-                  className={linkClass('create-test')}
+                  onClick={() => handleNav("create-test")}
+                  className={linkClass("create-test")}
                 >
                   <PlusCircle className="h-4 w-4" />
                   Create Test
                 </button>
                 <button
-                  onClick={() => handleNav('profile')}
-                  className={linkClass('profile')}
+                  onClick={() => handleNav("profile")}
+                  className={linkClass("profile")}
                 >
                   <UserIcon className="h-4 w-4" />
                   Profile ({user?.username})
@@ -220,14 +242,14 @@ export const Navbar: React.FC = () => {
               <div className="flex flex-col gap-2 pt-2 border-t border-border">
                 <Button
                   variant="outline"
-                  onClick={() => handleNav('login')}
+                  onClick={() => handleNav("login")}
                   className="w-full justify-center"
                 >
                   Log In
                 </Button>
                 <Button
                   variant="default"
-                  onClick={() => handleNav('register')}
+                  onClick={() => handleNav("register")}
                   className="w-full justify-center"
                 >
                   Sign Up
@@ -238,5 +260,5 @@ export const Navbar: React.FC = () => {
         </div>
       )}
     </header>
-  )
-}
+  );
+};

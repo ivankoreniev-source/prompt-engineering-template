@@ -23,6 +23,10 @@ testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["*TestCase"]
 pythonpath = ["."]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore:.*Using `httpx` with `starlette.testclient`.*",
+]
 
 [tool.ruff]
 line-length = 100

@@ -1,51 +1,51 @@
-import { baseApi } from './baseApi'
+import { baseApi } from "./baseApi";
 import type {
   AuthTokenResponse,
   LoginPayload,
   RegisterPayload,
   UpdateProfilePayload,
   User,
-} from '@/types/auth'
+} from "@/types/auth";
 
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     register: builder.mutation<AuthTokenResponse, RegisterPayload>({
       query: (body) => ({
-        url: '/auth/register',
-        method: 'POST',
+        url: "/auth/register",
+        method: "POST",
         body,
       }),
-      invalidatesTags: ['Auth'],
+      invalidatesTags: ["Auth"],
     }),
     login: builder.mutation<AuthTokenResponse, LoginPayload>({
       query: (body) => ({
-        url: '/auth/login',
-        method: 'POST',
+        url: "/auth/login",
+        method: "POST",
         body,
       }),
-      invalidatesTags: ['Auth'],
+      invalidatesTags: ["Auth"],
     }),
     logout: builder.mutation<{ message: string }, void>({
       query: () => ({
-        url: '/auth/logout',
-        method: 'POST',
+        url: "/auth/logout",
+        method: "POST",
       }),
-      invalidatesTags: ['Auth', 'MyTests', 'MyResults'],
+      invalidatesTags: ["Auth", "MyTests", "MyResults"],
     }),
     getMe: builder.query<User, void>({
-      query: () => '/auth/me',
-      providesTags: ['Auth'],
+      query: () => "/auth/me",
+      providesTags: ["Auth"],
     }),
     updateProfile: builder.mutation<User, UpdateProfilePayload>({
       query: (body) => ({
-        url: '/auth/profile',
-        method: 'PATCH',
+        url: "/auth/profile",
+        method: "PATCH",
         body,
       }),
-      invalidatesTags: ['Auth'],
+      invalidatesTags: ["Auth"],
     }),
   }),
-})
+});
 
 export const {
   useRegisterMutation,
@@ -54,4 +54,4 @@ export const {
   useGetMeQuery,
   useLazyGetMeQuery,
   useUpdateProfileMutation,
-} = authApi
+} = authApi;

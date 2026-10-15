@@ -1,6 +1,9 @@
 ---
 description: Backend Layered Architecture Rules for FastAPI (QuizCraft)
 globs: ["backend/**"]
+pathFilters: ["backend/**"]
+PathFilters: ["backend/**"]
+paths: ["backend/**"]
 ---
 
 # Backend Architecture Rules

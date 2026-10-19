@@ -8,6 +8,7 @@ Injects contextual reminders ONLY when frontend development is actively in scope
 - Centralized config for API_BASE_URL
 - Accessible UI via shadcn/ui and Radix
 """
+
 import json
 import os
 import sys
@@ -47,18 +48,24 @@ def detect_active_context(transcript_path: str) -> str | None:
     if recent_tools:
         for _, args in reversed(recent_tools):
             target = (
-                (args.get("TargetFile") or args.get("AbsolutePath") or "")
-                + " "
-                + (args.get("CommandLine") or "")
-                + " "
-                + (args.get("Cwd") or "")
-            ).replace("\\", "/").lower()
+                (
+                    (args.get("TargetFile") or args.get("AbsolutePath") or "")
+                    + " "
+                    + (args.get("CommandLine") or "")
+                    + " "
+                    + (args.get("Cwd") or "")
+                )
+                .replace("\\", "/")
+                .lower()
+            )
 
             is_be = "backend" in target or any(
-                k in target for k in ["pytest", "uvicorn", "fastapi", "ruff", "mypy", "pyproject.toml"]
+                k in target
+                for k in ["pytest", "uvicorn", "fastapi", "ruff", "mypy", "pyproject.toml"]
             )
             is_fe = "frontend" in target or any(
-                k in target for k in ["npm", "vite", "oxlint", "prettier", "tsx", "jsx", "package.json"]
+                k in target
+                for k in ["npm", "vite", "oxlint", "prettier", "tsx", "jsx", "package.json"]
             )
 
             if is_be and not is_fe:
@@ -127,13 +134,7 @@ def main() -> None:
         "Never hardcode localhost API URLs, and never leak answer keys into test-taking views."
     )
 
-    print(json.dumps({
-        "injectSteps": [
-            {
-                "ephemeralMessage": reminder
-            }
-        ]
-    }))
+    print(json.dumps({"injectSteps": [{"ephemeralMessage": reminder}]}))
 
 
 if __name__ == "__main__":

@@ -5,6 +5,7 @@ Audits frontend state only when a frontend tool has run:
 - Applies strictly to frontend files and tasks.
 - If the completed tool was for backend or other domains, returns immediately.
 """
+
 import json
 import sys
 

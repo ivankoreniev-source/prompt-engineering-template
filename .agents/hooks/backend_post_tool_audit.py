@@ -6,9 +6,10 @@ Audits backend data files only when a backend tool has run:
 - If the completed tool was for frontend or other domains, returns immediately.
 - Ensures all files in backend/data/*.json remain valid JSON arrays.
 """
+
 import json
-from pathlib import Path
 import sys
+from pathlib import Path
 
 
 def is_backend_target(args: dict) -> bool:
@@ -23,7 +24,10 @@ def is_backend_target(args: dict) -> bool:
         cwd_lower = cwd.lower()
         if "backend" in cwd_lower or "backend" in cmd_lower:
             return True
-        if any(tool in cmd_lower for tool in ["pytest", "uvicorn", "uv sync", "python -m app", "ruff", "mypy"]):
+        if any(
+            tool in cmd_lower
+            for tool in ["pytest", "uvicorn", "uv sync", "python -m app", "ruff", "mypy"]
+        ):
             return True
     return False
 
@@ -45,7 +49,11 @@ def main() -> None:
 
     # Locate backend data directory
     workspace_paths = payload.get("workspacePaths", [])
-    root = Path(workspace_paths[0]) if workspace_paths else Path(__file__).resolve().parent.parent.parent
+    root = (
+        Path(workspace_paths[0])
+        if workspace_paths
+        else Path(__file__).resolve().parent.parent.parent
+    )
     data_dir = root / "backend" / "data"
 
     if data_dir.exists():

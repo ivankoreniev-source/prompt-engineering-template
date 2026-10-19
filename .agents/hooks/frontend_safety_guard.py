@@ -8,6 +8,7 @@ Ensures frontend safety invariants:
 - Disallows storing sensitive passwords in localStorage.
 - Enforces that test-taking components do not leak answer keys.
 """
+
 import json
 import sys
 
@@ -47,39 +48,79 @@ def main() -> None:
 
     # Guard 0: Destructive command line check
     cmd = (args.get("CommandLine") or "").replace("\\", "/").lower()
-    if any(rm in cmd for rm in ["rm -rf frontend/src", "rmdir /s /q frontend/src", "rmdir /s /q frontend\\src", "rm -rf frontend", "rmdir /s /q frontend"]):
-        print(json.dumps({
-            "decision": "deny",
-            "reason": "Frontend safety guard: Destructive deletion of frontend source directories is blocked."
-        }))
+    if any(
+        rm in cmd
+        for rm in [
+            "rm -rf frontend/src",
+            "rmdir /s /q frontend/src",
+            "rmdir /s /q frontend\\src",
+            "rm -rf frontend",
+            "rmdir /s /q frontend",
+        ]
+    ):
+        print(
+            json.dumps(
+                {
+                    "decision": "deny",
+                    "reason": (
+                        "Frontend safety guard: Destructive deletion of "
+                        "frontend source directories is blocked."
+                    ),
+                }
+            )
+        )
         return
 
     target_file = (args.get("TargetFile") or "").replace("\\", "/").lower()
     code_content = args.get("CodeContent") or args.get("ReplacementContent") or ""
 
     # Guard 1: Prevent hardcoding backend URLs in component files (except in lib/config.ts)
-    if "frontend/src/" in target_file and not target_file.endswith("config.ts"):
-        if "http://localhost:8001" in code_content or "http://127.0.0.1:8001" in code_content:
-            print(json.dumps({
-                "decision": "deny",
-                "reason": "Frontend safety guard: Do not hardcode API URLs in components. Import API_BASE_URL from '@/lib/config' instead."
-            }))
-            return
+    if (
+        "frontend/src/" in target_file
+        and not target_file.endswith("config.ts")
+        and ("http://localhost:8001" in code_content or "http://127.0.0.1:8001" in code_content)
+    ):
+        print(
+            json.dumps(
+                {
+                    "decision": "deny",
+                    "reason": (
+                        "Frontend safety guard: Do not hardcode API URLs in components. "
+                        "Import API_BASE_URL from '@/lib/config' instead."
+                    ),
+                }
+            )
+        )
+        return
 
     # Guard 2: Prevent storing plain passwords in localStorage
     if "localstorage.setitem" in code_content.lower() and "password" in code_content.lower():
-        print(json.dumps({
-            "decision": "deny",
-            "reason": "Frontend safety guard: Plaintext passwords must never be stored in localStorage."
-        }))
+        print(
+            json.dumps(
+                {
+                    "decision": "deny",
+                    "reason": (
+                        "Frontend safety guard: Plaintext passwords must "
+                        "never be stored in localStorage."
+                    ),
+                }
+            )
+        )
         return
 
     # Guard 3: Prevent exposing correct answers in TakeTestPage
     if "taketestpage" in target_file and "correct_answers" in code_content:
-        print(json.dumps({
-            "decision": "deny",
-            "reason": "Frontend safety guard: TakeTestPage must not reference correct_answers; questions must remain sanitized during test taking."
-        }))
+        print(
+            json.dumps(
+                {
+                    "decision": "deny",
+                    "reason": (
+                        "Frontend safety guard: TakeTestPage must not reference "
+                        "correct_answers; questions must remain sanitized during test taking."
+                    ),
+                }
+            )
+        )
         return
 
     print(json.dumps({"decision": "allow"}))
